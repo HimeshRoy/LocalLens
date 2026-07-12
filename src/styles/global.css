@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+:root {
+    --color-primary: #2563eb;
+    --color-primary-dark: #1d4ed8;
+    --color-bg: #edf2f7;
+    --color-surface: #f5f7fb;
+    --color-card: #ffffff;
+    --color-text: #1f2937;
+    --color-text-light: #6b7280;
+    --color-success: #22c55e;
+    --color-warning: #facc15;
+    --color-danger: #ef4444;
+    --radius-sm: 12px;
+    --radius-md: 18px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+    --radius-full: 9999px;
+    --shadow-clay:
+        4px 4px 8px rgba(163, 177, 198, .45),
+        -4px -4px 8px rgba(255, 255, 255, .95);
+    --shadow-clay-sm:
+        4px 4px 8px rgba(163, 177, 198, .35),
+        -4px -4px 8px rgba(255, 255, 255, .9);
+    --shadow-inset:
+        inset 4px 4px 8px rgba(163, 177, 198, .35),
+        inset -4px -4px 8px rgba(255, 255, 255, .9);
+    --transition: 250ms ease;
+}
+
+body {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: "Inter", sans-serif;
+}
+
+.clay {
+    background: var(--color-surface);
+    box-shadow: var(--shadow-clay);
+}
+
+.clay-sm {
+    background: var(--color-surface);
+    box-shadow: var(--shadow-clay-sm);
+}
+
+.clay-inset {
+    background: var(--color-surface);
+    box-shadow: var(--shadow-inset);
+}
+
+.clay-button {
+    transition: var(--transition);
+}
+
+.clay-button:hover {
+    transform: translateY(-2px);
+}
+
+.clay-button:active {
+    transform: scale(.98);
+}
