@@ -19,6 +19,10 @@ export const useRemoveFavorite = () => {
       queryClient.invalidateQueries({
         queryKey: ["place"],
       });
+
+      queryClient.invalidateQueries({
+        queryKey: ["feed"],
+      });
     },
   });
 };

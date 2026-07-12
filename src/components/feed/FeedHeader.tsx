@@ -23,7 +23,7 @@ const FeedHeader = ({ place }: FeedHeaderProps) => {
         <div>
           <div className="flex items-center gap-1">
             <Link
-              to={`/@${place.createdBy.username}`}
+              to={`users/${place.createdBy.username}`}
               className="font-semibold hover:text-blue-600"
             >
               {place.createdBy.username}

@@ -13,7 +13,7 @@ export interface Profile {
   role: string;
   isVerified: boolean;
   createdAt: string;
-  isPrivate: boolean;
+  isPrivate?: boolean;
 
   _count: {
     reviews: number;

@@ -17,6 +17,9 @@ export const useAddToCollection = () => {
       queryClient.invalidateQueries({
         queryKey: ["collections"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["feed"],
+      });
     },
   });
 };

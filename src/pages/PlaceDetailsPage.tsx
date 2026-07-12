@@ -17,7 +17,7 @@ import { useAuthStore } from "../store/auth.store";
 import { useDeleteReview } from "../hooks/useDeleteReview";
 import { toast } from "react-toastify";
 import { useUpdateReview } from "../hooks/useUpdateReview";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Heart } from "lucide-react";
 import { useFavorites } from "../hooks/useFavorites";
 import { useAddFavorite } from "../hooks/useAddFavorite";
@@ -54,6 +54,19 @@ const PlaceDetailsPage = () => {
 
   const { data: reviewData, isPending: reviewsLoading } =
     usePlaceReviews(placeId);
+
+    useEffect(() => {
+  if (location.hash === "#reviews") {
+    const section = document.getElementById("reviews");
+
+    if (section) {
+      section.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }
+}, [location]);
 
   if (isLoading) {
     return (
@@ -251,7 +264,9 @@ const PlaceDetailsPage = () => {
           </section>
         )}
 
-        <ReviewForm placeId={place.id} />
+        <div id="reviews">
+          <ReviewForm placeId={place.id} />
+        </div>
 
         <section className="mt-8 rounded-3xl border border-zinc-200 bg-white p-6 clay">
           <div className="flex items-center justify-between">
