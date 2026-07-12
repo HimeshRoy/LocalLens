@@ -1,6 +1,5 @@
 import MainLayout from "../layouts/MainLayout";
 import FeedCard from "../components/feed/FeedCard";
-import { useNearbyPlaces } from "../hooks/useNearbyPlaces";
 import { useLocationStore } from "../store/location.store";
 import { useFeed } from "../hooks/useFeed";
 

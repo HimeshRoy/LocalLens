@@ -12,7 +12,6 @@ interface ProfileAvatarProps {
 const ProfileAvatar = ({
   profile,
   isOwner,
-  onAvatarClick,
 }: ProfileAvatarProps) => {
   const uploadAvatar = useUploadAvatar();
 

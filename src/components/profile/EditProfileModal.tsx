@@ -22,6 +22,7 @@ const EditProfileModal = ({
     bio: profile.bio ?? "",
     city: profile.city ?? "",
     country: profile.country ?? "",
+    isPrivate: (profile as any).isPrivate ?? false,
   });
 
   useEffect(() => {
@@ -31,6 +32,7 @@ const EditProfileModal = ({
       bio: profile.bio ?? "",
       city: profile.city ?? "",
       country: profile.country ?? "",
+      isPrivate: (profile as any).isPrivate ?? false,
     });
   }, [profile, open]);
 
@@ -128,6 +130,22 @@ const EditProfileModal = ({
             placeholder="Country"
             className="w-full rounded-md border border-blue-300 px-4 py-3 outline-blue-300"
           />
+
+          <label htmlFor="isPrivate" className="text-zinc-400 px-2 flex items-center gap-2">
+            <input
+              id="isPrivate"
+              type="checkbox"
+              checked={form.isPrivate}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  isPrivate: e.target.checked,
+                })
+              }
+              className="h-4 w-4"
+            />
+            Private account
+          </label>
         </div>
 
         <div className="flex justify-end gap-3 p-4">

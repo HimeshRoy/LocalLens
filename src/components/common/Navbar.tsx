@@ -12,7 +12,9 @@ const Navbar = ({ city, loading, refreshLocation }: NavbarProps) => {
     <header className="sticky top-0 z-50 h-[72px] bg-white">
       <div className="mx-auto flex h-full max-w-3xl items-center justify-between px-4">
         <h1 className="text-2xl font-bold tracking-tight text-blue-700">
-          LocalLens
+           <a href="/">
+            LocalLens
+            </a>
         </h1>
 
         <LocationPicker

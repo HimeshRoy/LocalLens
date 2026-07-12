@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { CheckCircle2, MapPin, MoreHorizontal, Verified } from "lucide-react";
+import { MapPin, MoreHorizontal, Verified } from "lucide-react";
 
 interface FeedHeaderProps {
   place: any;

@@ -41,7 +41,7 @@ const LoginPage = () => {
           </span>
 
           <h1 className="text-5xl font-extrabold leading-tight text-blue-700 text-center">
-            LocalLens
+            <a href="/">LocalLens</a>
           </h1>
 
           <p className="mt-3 max-w-sm text-base leading-7 text-zinc-600 text-center">

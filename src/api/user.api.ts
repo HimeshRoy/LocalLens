@@ -57,7 +57,7 @@ export const userApi = {
     bio?: string;
     city?: string;
     country?: string;
-    isPrivate: boolean;
+    isPrivate?: boolean;
   }) => {
     const response = await api.patch("/users/me", payload);
 

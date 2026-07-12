@@ -112,7 +112,7 @@ const CollectionModal = ({ open, onClose, placeId }: CollectionModalProps) => {
                     type="button"
                     onClick={async () => {
                       try {
-                        const collection = await createCollection.mutateAsync({
+                        await createCollection.mutateAsync({
                           name,
                           emoji,
                           description,

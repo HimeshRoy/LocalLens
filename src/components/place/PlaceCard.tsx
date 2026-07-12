@@ -1,4 +1,4 @@
-import { Heart, MapPin, Star, Verified } from "lucide-react";
+import { Heart, MapPin, Verified } from "lucide-react";
 import type { Place } from "../../types/place.types";
 import PostHeader from "./PostHeader";
 import { Link } from "react-router-dom";

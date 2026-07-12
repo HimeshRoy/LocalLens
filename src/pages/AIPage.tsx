@@ -1,4 +1,3 @@
-import React from "react";
 import MainLayout from "../layouts/MainLayout";
 import { useState, useEffect } from "react";
 import { Menu, SquarePen, Send, Sparkles } from "lucide-react";

@@ -1,4 +1,3 @@
-import React from "react";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useDebounce } from "../hooks/useDebounce";
@@ -71,7 +70,9 @@ const RegisterPage = () => {
           </span>
 
           <h1 className="text-5xl font-extrabold leading-tight text-blue-700">
+            <a href="/">
             LocalLens
+            </a>
           </h1>
 
           <p className="mt-3 max-w-sm text-base leading-7 text-zinc-600">

@@ -1,12 +1,10 @@
 import { useMyFavorites } from "../../../hooks/useMyFavorites";
 import { Heart, Star } from "lucide-react";
 import { toast } from "react-toastify";
-import { useAddFavorite } from "../../../hooks/useAddFavorite";
 import { useRemoveFavorite } from "../../../hooks/useRemoveFavorite";
 
 const SavedTab = () => {
   const { data, isLoading } = useMyFavorites();
-  const addFavorite = useAddFavorite();
   const removeFavorite = useRemoveFavorite();
 
   if (isLoading) {

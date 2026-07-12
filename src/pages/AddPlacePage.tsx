@@ -29,7 +29,7 @@ const AddPlacePage = () => {
 
   const [images, setImages] = useState<File[]>([]);
 
-  const { data: searchResults, isPending: searching } =
+  const { data: searchResults } =
     useSearchLocation(debouncedSearch);
 
   const [selectedLocation, setSelectedLocation] = useState<{

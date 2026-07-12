@@ -22,7 +22,7 @@ const LocationPicker = ({
         onClick={() => setIsOpen((prev) => !prev)}
         className="flex w-full items-center gap-3 rounded-2xl p-3 transition hover:bg-zinc-100 bg-zinc-200"
       >
-        <MapPin size={18} />
+        <MapPin size={20} className=" text-cyan-600"/>
 
         <span className="font-medium">
           {loading ? "Detecting..." : city || "Unknown"}
