@@ -4,6 +4,7 @@ import { useLocationStore } from "../store/location.store";
 import { useFeed } from "../hooks/useFeed";
 import FeedSkeleton from "../components/feed/FeedSkeleton";
 import { useEffect, useRef } from "react";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 const HomePage = () => {
   const { latitude, longitude } = useLocationStore();
@@ -53,7 +54,14 @@ const HomePage = () => {
   if (error) {
     return (
       <MainLayout>
-        <div className="p-4">Something went wrong.</div>
+        <div className="min-h-full flex-col justify-center items-center">
+          <DotLottieReact
+            src="https://lottie.host/fc82f83d-44b6-4942-bddd-20cc5106afc7/wpq7VZV2s8.lottie"
+            loop
+            autoplay
+          />
+          <p className="text-center">Something went wrong.</p>
+        </div>
       </MainLayout>
     );
   }
@@ -63,7 +71,13 @@ const HomePage = () => {
       <div className="space-y-6">
         {places.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="text-5xl">📍</div>
+            <div className="text-5xl">
+              <DotLottieReact
+                src="https://lottie.host/aed8d2ec-c0ff-4852-acbd-df55e35881fe/cjqdGIiW26.lottie"
+                loop
+                autoplay
+              />
+            </div>
 
             <h2 className="mt-4 text-xl font-semibold">Nothing nearby yet</h2>
 
