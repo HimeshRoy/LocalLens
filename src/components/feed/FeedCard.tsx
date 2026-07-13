@@ -2,7 +2,6 @@ import FeedHeader from "./FeedHeader";
 import FeedCarousel from "./FeedCarousel";
 import FeedActions from "./FeedActions";
 import FeedContent from "./FeedContent";
-import { Link } from "react-router-dom";
 import { useAddFavorite } from "../../hooks/useAddFavorite";
 import { useRemoveFavorite } from "../../hooks/useRemoveFavorite";
 import { toast } from "react-toastify";
@@ -40,22 +39,22 @@ const FeedCard = ({ place }: FeedCardProps) => {
     <article className="overflow-hidden bg-[var(--color-bg)] border-b border-b-blue-100 pb-10">
       <FeedHeader place={place} />
 
-      <Link to={`/places/${place.slug}`}>
-        <FeedCarousel
-          images={
-            place.images?.length
-              ? place.images
-              : place.coverImage
-                ? [
-                    {
-                      id: "cover",
-                      imageUrl: place.coverImage,
-                    },
-                  ]
-                : []
-          }
-        />
-      </Link>
+      <FeedCarousel
+        place={place}
+        onFavorite={handleFavorite}
+        images={
+          place.images?.length
+            ? place.images
+            : place.coverImage
+              ? [
+                  {
+                    id: "cover",
+                    imageUrl: place.coverImage,
+                  },
+                ]
+              : []
+        }
+      />
 
       <FeedActions
         place={place}

@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
-import { MapPin, MoreHorizontal, Verified } from "lucide-react";
+import { MapPin } from "lucide-react";
+import UserBadge from "../common/UserBadge";
+import { formatDistanceToNow } from "date-fns";
 
 interface FeedHeaderProps {
   place: any;
@@ -9,11 +11,10 @@ const FeedHeader = ({ place }: FeedHeaderProps) => {
   return (
     <div className="flex items-start justify-between px-5 pt-5 pb-3">
       <div className="flex gap-3">
-        <Link to={`/@${place.createdBy.username}`}>
+        <Link to={`/users/${place.createdBy.username}`}>
           <img
             src={
-              place.createdBy.avatar ??
-              "https://placehold.co/100x100?text=User"
+              place.createdBy.avatar ?? "https://placehold.co/100x100?text=User"
             }
             alt={place.createdBy.fullName}
             className="h-12 w-12 rounded-full object-cover"
@@ -23,18 +24,14 @@ const FeedHeader = ({ place }: FeedHeaderProps) => {
         <div>
           <div className="flex items-center gap-1">
             <Link
-              to={`users/${place.createdBy.username}`}
+              to={`/users/${place.createdBy.username}`}
               className="font-semibold hover:text-blue-600"
             >
-              {place.createdBy.username}
-            </Link>
-
-            {place.createdBy.isVerified && (
-              <Verified
-                size={20}
-                className="fill-blue-500 text-white font-light"
+              <UserBadge
+                fullName={place.createdBy.fullName}
+                isVerified={place.createdBy.isVerified}
               />
-            )}
+            </Link>
           </div>
 
           <Link
@@ -49,14 +46,25 @@ const FeedHeader = ({ place }: FeedHeaderProps) => {
 
             <span>
               {place.city}, {place.state}
+              {place.distance != null && (
+                <>
+                  {" "}
+                  •{" "}
+                  {place.distance < 1
+                    ? `${Math.round(place.distance * 1000)} m`
+                    : `${place.distance.toFixed(1)} km`}
+                </>
+              )}
             </span>
           </div>
         </div>
       </div>
 
-      <button className="rounded-full p-2 transition hover:bg-zinc-100">
-        <MoreHorizontal size={20} />
-      </button>
+      <p className="text-xs font-medium text-zinc-500 whitespace-nowrap">
+        {formatDistanceToNow(new Date(place.createdAt), {
+          addSuffix: true,
+        })}
+      </p>
     </div>
   );
 };
