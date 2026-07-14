@@ -1,5 +1,4 @@
 import { useState } from "react";
-import EditProfileModal from "../components/profile/EditProfileModal";
 import MainLayout from "../layouts/MainLayout";
 import ProfileHeader from "../components/profile/ProfileHeader/ProfileHeader";
 import ProfileContent from "../components/profile/ProfileContent/ProfileContent";
@@ -13,8 +12,6 @@ const ProfilePage = () => {
   >("reviews");
 
   const navigate = useNavigate();
-
-  const [editProfileOpen, setEditProfileOpen] = useState(false);
   const { data, isLoading } = useProfile();
 
   if (isLoading) {
@@ -65,7 +62,7 @@ const ProfilePage = () => {
           isOwner={true}
           activeTab={activeTab}
           onTabChange={setActiveTab}
-          onEditProfile={() => setEditProfileOpen(true)}
+          onEditProfile={() => navigate('/profile/edit')}
           onSettings={() => navigate("/settings")}
           onShare={handleShare}
         />
@@ -74,12 +71,6 @@ const ProfilePage = () => {
           activeTab={activeTab}
           profile={profile}
           isOwner={true}
-        />
-
-        <EditProfileModal
-          open={editProfileOpen}
-          onClose={() => setEditProfileOpen(false)}
-          profile={profile}
         />
       </div>
     </MainLayout>

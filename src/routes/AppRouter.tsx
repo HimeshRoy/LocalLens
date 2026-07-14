@@ -13,6 +13,7 @@ import CollectionDetailsPage from "../pages/CollectionDetailsPage";
 import EditPlacePage from "../pages/EditPlacePage";
 import PublicProfilePage from "../pages/PublicProfilePage";
 import SettingsPage from "../pages/SettingsPage";
+import EditProfilePage from "../pages/EditProfilePage";
 
 const AppRouter = () => {
   return (
@@ -30,6 +31,10 @@ const AppRouter = () => {
           <Route path="/places/new" element={<AddPlacePage />} />
           <Route path="/collections/:id" element={<CollectionDetailsPage />} />
           <Route path="/places/:id/edit" element={<EditPlacePage />} />
+          <Route
+    path="/profile/edit"
+    element={<EditProfilePage />}
+/>
           <Route
   path="/settings"
   element={
