@@ -14,6 +14,9 @@ import EditPlacePage from "../pages/EditPlacePage";
 import PublicProfilePage from "../pages/PublicProfilePage";
 import SettingsPage from "../pages/SettingsPage";
 import EditProfilePage from "../pages/EditProfilePage";
+import AdminLayout from "../layouts/AdminLayout";
+import DashboardPage from "../pages/admin/DashboardPage";
+import CategoriesPage from "../pages/admin/CategoriesPage";
 
 const AppRouter = () => {
   return (
@@ -31,16 +34,15 @@ const AppRouter = () => {
           <Route path="/places/new" element={<AddPlacePage />} />
           <Route path="/collections/:id" element={<CollectionDetailsPage />} />
           <Route path="/places/:id/edit" element={<EditPlacePage />} />
-          <Route
-    path="/profile/edit"
-    element={<EditProfilePage />}
-/>
-          <Route
-  path="/settings"
-  element={
-      <SettingsPage />
-  }
-/>
+          <Route path="/profile/edit" element={<EditProfilePage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+        </Route>
+
+        <Route element={<ProtectedRoute />}>
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route path="/admin/dashboard" element={<DashboardPage />} />
+            <Route path="/admin/categories" element={<CategoriesPage />} />
+          </Route>
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

@@ -36,7 +36,7 @@ const FeedCard = ({ place }: FeedCardProps) => {
     }
   };
   return (
-    <article className="overflow-hidden bg-[var(--color-bg)] border-b border-b-blue-100 pb-10">
+    <article className="overflow-hidden bg-[var(--color-bg)] border-b border-b-zinc-200 pb-10">
       <FeedHeader place={place} />
 
       <FeedCarousel

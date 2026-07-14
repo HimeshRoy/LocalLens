@@ -23,10 +23,25 @@ const LoginPage = () => {
         password,
       },
       {
-        onSuccess: () => {
-          navigate(from, {
-            replace: true,
-          });
+        onSuccess: (response) => {
+          switch (response.data.user.role) {
+            case "ADMIN":
+              navigate("/admin/dashboard", {
+                replace: true,
+              });
+              break;
+
+            case "BUSINESS":
+              navigate("/business", {
+                replace: true,
+              });
+              break;
+
+            default:
+              navigate(from, {
+                replace: true,
+              });
+          }
         },
       },
     );
