@@ -2,8 +2,8 @@ import {
   LayoutDashboard,
   Users,
   FolderTree,
-  Tags,
   LogOut,
+  MapPin,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
@@ -11,7 +11,7 @@ const menuItems = [
   {
     name: "Dashboard",
     icon: LayoutDashboard,
-    path: "/admin/dashboard",
+    path: "/admin",
   },
   {
     name: "Users",
@@ -24,20 +24,23 @@ const menuItems = [
     path: "/admin/categories",
   },
   {
-    name: "Tags",
-    icon: Tags,
-    path: "/admin/tags",
+    name: "Places",
+    path: "/admin/places",
+    icon: MapPin,
   },
+  // {
+  //   name: "Tags",
+  //   icon: Tags,
+  //   path: "/admin/tags",
+  //   status: "active"
+  // },
 ];
 
 const AdminSidebar = () => {
   return (
     <aside className="flex h-screen w-72 flex-col bg-white clay">
-
       <div className="border-b border-b-zinc-200 p-6">
-        <h1 className="text-2xl font-bold text-blue-600">
-          LocalLens
-        </h1>
+        <h1 className="text-2xl font-bold text-blue-600">LocalLens</h1>
       </div>
 
       <nav className="flex-1 space-y-2 p-4">
@@ -59,9 +62,7 @@ const AdminSidebar = () => {
             >
               <Icon size={20} />
 
-              <span className="font-medium">
-                {item.name}
-              </span>
+              <span className="font-medium">{item.name}</span>
             </NavLink>
           );
         })}
@@ -70,7 +71,6 @@ const AdminSidebar = () => {
       <div className="border-t border-zinc-200 p-4">
         <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-red-600 transition hover:bg-red-50">
           <LogOut size={20} />
-
           Logout
         </button>
       </div>

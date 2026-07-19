@@ -26,7 +26,7 @@ const LoginPage = () => {
         onSuccess: (response) => {
           switch (response.data.user.role) {
             case "ADMIN":
-              navigate("/admin/dashboard", {
+              navigate("/admin", {
                 replace: true,
               });
               break;

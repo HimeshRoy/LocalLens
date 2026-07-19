@@ -17,6 +17,11 @@ import EditProfilePage from "../pages/EditProfilePage";
 import AdminLayout from "../layouts/AdminLayout";
 import DashboardPage from "../pages/admin/DashboardPage";
 import CategoriesPage from "../pages/admin/CategoriesPage";
+import EditCategoryPage from "../pages/admin/EditCategoryPage";
+import CreateCategoryPage from "../pages/admin/CreateCategoryPage";
+import UsersPage from "../pages/admin/UsersPage";
+import PlacesPage from "../pages/admin/PlacesPage";
+import AdminPlaceDetailsPage from "../pages/admin/AdminPlaceDetailsPage";
 
 const AppRouter = () => {
   return (
@@ -39,9 +44,23 @@ const AppRouter = () => {
         </Route>
 
         <Route element={<ProtectedRoute />}>
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route path="/admin/dashboard" element={<DashboardPage />} />
+          <Route element={<AdminLayout />}>
+            <Route path="/admin" element={<DashboardPage />} />
             <Route path="/admin/categories" element={<CategoriesPage />} />
+            <Route
+              path="/admin/categories/:id/edit"
+              element={<EditCategoryPage />}
+            />
+            <Route
+              path="/admin/categories/new"
+              element={<CreateCategoryPage />}
+            />
+            <Route path="/admin/users" element={<UsersPage />} />
+            <Route path="/admin/places" element={<PlacesPage />} />
+            <Route
+    path="admin/places/:id"
+    element={<AdminPlaceDetailsPage />}
+/>
           </Route>
         </Route>
 
