@@ -15,6 +15,41 @@ export interface DashboardStatistics {
   pendingClaims: number;
 }
 
+export interface AdminPlaceDetails extends AdminPlace {
+  description: string | null;
+
+  address: string;
+  country: string;
+
+  latitude: number;
+  longitude: number;
+
+  phone: string | null;
+  website: string | null;
+
+  openingHours: string | null;
+
+  priceRange: string | null;
+
+  images: {
+    id: string;
+    imageUrl: string;
+  }[];
+
+  latestReviews: {
+    id: string;
+    rating: number;
+    comment: string;
+    createdAt: string;
+
+    user: {
+      id: string;
+      fullName: string;
+      username: string;
+    };
+  }[];
+}
+
 export interface DashboardData {
   statistics: DashboardStatistics;
   recentUsers: any[];
@@ -87,6 +122,40 @@ export interface AdminPlace {
     reviews: number;
     images: number;
   };
+}
+
+export interface AdminPlaceDetails extends AdminPlace {
+  description: string | null;
+
+  address: string;
+  country: string;
+
+  latitude: number;
+  longitude: number;
+
+  phone: string | null;
+  website: string | null;
+
+  openingHours: string | null;
+
+  priceRange: string | null;
+
+  images: {
+    id: string;
+    imageUrl: string;
+  }[];
+
+  reviews: {
+  id: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
+  user: {
+    id: string;
+    fullName: string;
+    username: string;
+  };
+}[];
 }
 
 export const adminApi = {
@@ -190,6 +259,14 @@ export const adminApi = {
 
   deletePlace: async (id: string) => {
     const { data } = await api.delete(`/admin/places/${id}`);
+
+    return data.data;
+  },
+
+  getPlaceById: async (id: string): Promise<AdminPlaceDetails> => {
+    const { data } = await api.get<ApiResponse<AdminPlaceDetails>>(
+      `/admin/places/${id}`,
+    );
 
     return data.data;
   },

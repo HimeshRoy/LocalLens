@@ -6,13 +6,8 @@ export const useAdminVerifyPlace = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      id,
-      isVerified,
-    }: {
-      id: string;
-      isVerified: boolean;
-    }) => adminApi.verifyPlace(id, isVerified),
+    mutationFn: ({ id, isVerified }: { id: string; isVerified: boolean }) =>
+      adminApi.verifyPlace(id, isVerified),
 
     onSuccess: () => {
       toast.success("Place verification updated successfully");
@@ -20,12 +15,14 @@ export const useAdminVerifyPlace = () => {
       queryClient.invalidateQueries({
         queryKey: ["admin-places"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["admin-place"],
+      });
     },
 
     onError: (error: any) => {
       toast.error(
-        error?.response?.data?.message ||
-          "Failed to update place verification"
+        error?.response?.data?.message || "Failed to update place verification",
       );
     },
   });

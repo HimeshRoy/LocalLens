@@ -6,13 +6,8 @@ export const useAdminUpdatePlaceStatus = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      id,
-      isActive,
-    }: {
-      id: string;
-      isActive: boolean;
-    }) => adminApi.updatePlaceStatus(id, isActive),
+    mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) =>
+      adminApi.updatePlaceStatus(id, isActive),
 
     onSuccess: () => {
       toast.success("Place status updated successfully");
@@ -20,12 +15,14 @@ export const useAdminUpdatePlaceStatus = () => {
       queryClient.invalidateQueries({
         queryKey: ["admin-places"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["admin-place"],
+      });
     },
 
     onError: (error: any) => {
       toast.error(
-        error?.response?.data?.message ||
-          "Failed to update place status"
+        error?.response?.data?.message || "Failed to update place status",
       );
     },
   });
