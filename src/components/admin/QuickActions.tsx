@@ -16,13 +16,13 @@ const actions = [
     to: "/admin/tags/new",
     color: "from-orange-500 to-red-500",
   },
-  // {
-  //   title: "Manage Users",
-  //   description: "View all users",
-  //   icon: Users,
-  //   to: "/admin/users",
-  //   color: "from-green-500 to-emerald-600",
-  // },
+  {
+    title: "Manage Users",
+    description: "View all users",
+    icon: Users,
+    to: "/admin/users",
+    color: "from-green-500 to-emerald-600",
+  },
   {
     title: "Business Claims",
     description: "Review pending claims",
