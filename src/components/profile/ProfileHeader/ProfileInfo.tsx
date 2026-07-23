@@ -1,4 +1,4 @@
-import { BadgeCheck, CalendarDays, MapPin } from "lucide-react";
+import { BadgeCheck, MapPin } from "lucide-react";
 import type { Profile } from "../../../api/user.api";
 
 interface ProfileInfoProps {
@@ -7,54 +7,38 @@ interface ProfileInfoProps {
 
 const ProfileInfo = ({ profile }: ProfileInfoProps) => {
   const isOfficial = profile.fullName.trim().toLowerCase() === "locallens";
+  
   return (
-    <div className="mt-6 flex flex-col items-center">
+    <div className="mt-4 flex flex-col items-center">
       <div className="flex items-center gap-1">
-        <span
-          className={`font-semibold text-2xl ${
-            isOfficial ? "text-blue-600" : "text-zinc-900"
-          }`}
-        >
+        <span className="font-bold text-xl text-black">
           {profile.fullName}
         </span>
 
         {isOfficial ? (
-          <BadgeCheck size={25} className="fill-yellow-400 text-white" />
+          <BadgeCheck size={20} className="fill-blue-500 text-white" />
         ) : profile.isVerified ? (
-          <BadgeCheck size={25} className="fill-blue-500 text-white" />
+          <BadgeCheck size={20} className="fill-blue-500 text-white" />
         ) : null}
       </div>
 
-      <p className="mt-1 text-base font-medium text-zinc-500">
+      <p className="mt-0.5 text-sm font-medium text-gray-500">
         @{profile.username}
       </p>
 
-      {(profile.city || profile.country) && (
-        <div className="mt-4 flex items-center gap-2 text-sm text-zinc-500">
-          <MapPin size={16} />
+      {profile.bio && (
+        <p className="mt-2 max-w-sm text-center text-sm leading-snug text-zinc-800">
+          {profile.bio}
+        </p>
+      )}
 
+      {(profile.city || profile.country) && (
+        <div className="mt-2 flex items-center gap-1 text-xs text-zinc-500">
+          <MapPin size={14} />
           <span>
             {[profile.city, profile.country].filter(Boolean).join(", ")}
           </span>
         </div>
-      )}
-
-      <div className="mt-2 flex items-center gap-2 text-sm text-zinc-400">
-        <CalendarDays size={15} />
-
-        <span>
-          Joined{" "}
-          {new Date(profile.createdAt).toLocaleDateString("en-IN", {
-            month: "long",
-            year: "numeric",
-          })}
-        </span>
-      </div>
-
-      {profile.bio && (
-        <p className="mt-5 max-w-xl text-center leading-7 text-zinc-600">
-          {profile.bio}
-        </p>
       )}
     </div>
   );

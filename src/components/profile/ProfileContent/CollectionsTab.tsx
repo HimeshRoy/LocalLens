@@ -14,63 +14,42 @@ const CollectionsTab = ({
   const collectionList = isOwner ? (data?.data ?? []) : (collections ?? []);
 
   if (isLoading) {
-    return (
-      <div className="py-10 text-center text-zinc-500">
-        Loading collections...
-      </div>
-    );
+    return <div className="py-10 text-center text-zinc-500">Loading...</div>;
   }
 
   if (!collectionList.length) {
     return (
-      <div className="rounded-2xl border border-dashed border-zinc-300 p-10 text-center text-zinc-500">
-        No collections yet.
-      </div>
+      <div className="py-20 text-center text-zinc-500">No collections yet.</div>
     );
   }
 
   return (
-    <div className="mt-6 grid gap-5 md:grid-cols-2">
+    <div className="grid grid-cols-3 gap-1 mt-4">
       {collectionList.map((collection: any) => (
         <Link
           to={`/collections/${collection.id}`}
           key={collection.id}
-          className="block"
+          className="group relative block aspect-square bg-zinc-100 rounded-2xl"
         >
-          <div
-            key={collection.id}
-            className="overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm transition hover:shadow-md"
-          >
-            <img
-              src={
-                collection.coverImage ||
-                "https://placehold.co/600x300?text=Collection"
-              }
-              alt={collection.name}
-              className="h-44 w-full object-cover"
-            />
+          <img
+            src={
+              collection.coverImage ||
+              "https://placehold.co/400x400?text=Collection"
+            }
+            alt={collection.name}
+            className="h-full w-full object-cover"
+          />
 
-            <div className="p-5">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold">
-                  {collection.emoji} {collection.name}
-                </h2>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-90" />
 
-                <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs">
-                  {collection.isPrivate ? "Private" : "Public"}
-                </span>
-              </div>
-
-              {collection.description && (
-                <p className="mt-3 line-clamp-2 text-sm text-zinc-500">
-                  {collection.description}
-                </p>
-              )}
-
-              <p className="mt-5 font-medium text-blue-600">
-                {collection.placesCount} Places
-              </p>
-            </div>
+          <div className="absolute bottom-2 left-2 right-2 text-white">
+            <h2 className="font-semibold truncate leading-tight flex items-center gap-1">
+              <span>{collection.emoji}</span>
+              <span className="truncate">{collection.name}</span>
+            </h2>
+            <p className="mt-0.5 text-[10px] font-medium opacity-90">
+              {collection.placesCount} places
+            </p>
           </div>
         </Link>
       ))}

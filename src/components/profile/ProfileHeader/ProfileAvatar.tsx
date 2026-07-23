@@ -9,12 +9,8 @@ interface ProfileAvatarProps {
   onAvatarClick?: () => void;
 }
 
-const ProfileAvatar = ({
-  profile,
-  isOwner,
-}: ProfileAvatarProps) => {
+const ProfileAvatar = ({ profile, isOwner }: ProfileAvatarProps) => {
   const uploadAvatar = useUploadAvatar();
-
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -26,7 +22,7 @@ const ProfileAvatar = ({
             "https://placehold.co/200x200/e5e7eb/6b7280?text=User"
           }
           alt={profile.fullName}
-          className="h-32 w-32 rounded-full border-4 border-white object-cover shadow-xl ring-4 ring-blue-50"
+          className="h-24 w-24 rounded-full border border-zinc-200 object-cover"
         />
 
         <input
@@ -36,9 +32,7 @@ const ProfileAvatar = ({
           hidden
           onChange={async (e) => {
             const file = e.target.files?.[0];
-
             if (!file) return;
-
             try {
               await uploadAvatar.mutateAsync(file);
             } catch (error) {
@@ -50,9 +44,9 @@ const ProfileAvatar = ({
         {isOwner && (
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="absolute bottom-1 right-1 flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg"
+            className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-zinc-100 border border-zinc-200 text-black shadow-sm transition active:scale-95"
           >
-            <Camera size={18} />
+            <Camera size={14} />
           </button>
         )}
       </div>

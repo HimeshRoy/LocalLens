@@ -39,19 +39,19 @@ const ProfileHeader = ({
       />
 
       <ProfileInfo profile={profile} />
-
-      <ProfileStats
-        profile={profile}
-        isOwner={isOwner}
-        activeTab={activeTab}
-        onTabChange={onTabChange}
-      />
       <ProfileActions
         isOwner={isOwner}
         onEditProfile={onEditProfile}
         onSettings={onSettings}
         onShare={onShare}
         onFollow={onFollow}
+      />
+
+      <ProfileStats
+        profile={profile}
+        isOwner={isOwner}
+        activeTab={activeTab}
+        onTabChange={onTabChange}
       />
     </div>
   );

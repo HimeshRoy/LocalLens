@@ -6,6 +6,7 @@ import { useProfile } from "../hooks/useProfile";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState<
     "reviews" | "collections" | "saved" | "places"

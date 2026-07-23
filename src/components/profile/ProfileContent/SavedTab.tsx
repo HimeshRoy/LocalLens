@@ -1,77 +1,53 @@
 import { useMyFavorites } from "../../../hooks/useMyFavorites";
-import { Heart, Star } from "lucide-react";
+import { Heart } from "lucide-react";
 import { toast } from "react-toastify";
 import { useRemoveFavorite } from "../../../hooks/useRemoveFavorite";
+import { Link } from "react-router-dom";
 
 const SavedTab = () => {
   const { data, isLoading } = useMyFavorites();
   const removeFavorite = useRemoveFavorite();
 
   if (isLoading) {
-    return (
-      <div className="py-10 text-center text-zinc-500">
-        Loading saved places...
-      </div>
-    );
+    return <div className="py-10 text-center text-zinc-500">Loading...</div>;
   }
 
   if (!data?.data?.length) {
-    return (
-      <div className="rounded-2xl border border-dashed border-zinc-300 p-10 text-center text-zinc-500">
-        No saved places yet.
-      </div>
-    );
+    return <div className="py-20 text-center text-zinc-500">No saved places yet.</div>;
   }
 
   return (
-    <div className="mt-6 grid gap-5 md:grid-cols-2">
+    <div className="grid grid-cols-3 gap-1 mt-4">
       {data.data.map((favorite: any) => (
         <div
           key={favorite.place.id}
-          className="relative overflow-hidden rounded-3xl border border-zinc-200 bg-white clay-sm transition hover:shadow-md"
+          className="group relative aspect-square bg-zinc-100"
         >
+          <Link to={`/places/${favorite.place.slug}`} className="block h-full w-full">
+            <img
+              src={
+                favorite.place.coverImage ||
+                "https://placehold.co/400x400?text=No+Image"
+              }
+              alt={favorite.place.name}
+              className="h-full w-full object-cover rounded-2xl"
+            />
+          </Link>
+
           <button
-            onClick={async () => {
+            onClick={async (e) => {
+              e.preventDefault();
               try {
                 await removeFavorite.mutateAsync(favorite.place.id);
-
                 toast.success("Removed from favorites");
               } catch (error: any) {
-                toast.error(
-                  error.response?.data?.message ?? "Something went wrong.",
-                );
+                toast.error(error.response?.data?.message ?? "Something went wrong.");
               }
             }}
-            className="absolute right-4 top-4 z-10 rounded-full bg-white/90 p-2 shadow backdrop-blur transition hover:scale-110"
+            className="absolute right-2 top-2 z-10 p-1 drop-shadow-md transition active:scale-75 md:opacity-0 md:group-hover:opacity-100"
           >
-            <Heart size={20} className="fill-red-500 text-red-500" />
+            <Heart size={20} className={"fill-red-500 text-red-500"}/>
           </button>
-
-          <img
-            src={
-              favorite.place.coverImage ||
-              "https://placehold.co/600x400?text=No+Image"
-            }
-            alt={favorite.place.name}
-            className="h-25 w-full object-cover"
-          />
-
-          <div className="p-5">
-            <h2 className="text-lg font-semibold">{favorite.place.name}</h2>
-
-            <p className="text-sm text-zinc-500">{favorite.place.city}</p>
-
-            <div className="mt-2 flex items-center justify-between">
-              <span className="font-medium text-amber-500 flex items-center gap-2">
-                <Star className="fill-amber-500" size={20} />{" "}
-                {favorite.place.averageRating ?? "New"}
-              </span>
-
-              <span className="text-sm text-zinc-400">
-                {favorite.place.category?.name}
-              </span>
-            </div>
-          </div>
         </div>
       ))}
     </div>

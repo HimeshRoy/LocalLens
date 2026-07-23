@@ -24,19 +24,16 @@ const FeedCard = ({ place }: FeedCardProps) => {
     try {
       if (place.isFavorite) {
         await removeFavorite.mutateAsync(place.id);
-
-        ("Removed from favorites");
       } else {
         await addFavorite.mutateAsync(place.id);
-
-        ("Added to favorites");
       }
     } catch (error: any) {
       toast.error(error.response?.data?.message ?? "Something went wrong.");
     }
   };
+
   return (
-    <article className="overflow-hidden bg-[var(--color-bg)] border-b border-b-zinc-200 pb-10">
+    <article className="bg-white border-b border-zinc-200 pb-4 mb-2">
       <FeedHeader place={place} />
 
       <FeedCarousel
@@ -46,12 +43,7 @@ const FeedCard = ({ place }: FeedCardProps) => {
           place.images?.length
             ? place.images
             : place.coverImage
-              ? [
-                  {
-                    id: "cover",
-                    imageUrl: place.coverImage,
-                  },
-                ]
+              ? [{ id: "cover", imageUrl: place.coverImage }]
               : []
         }
       />
@@ -65,6 +57,7 @@ const FeedCard = ({ place }: FeedCardProps) => {
       />
 
       <FeedContent place={place} />
+      
       {openCollection && (
         <CollectionModal
           placeId={openCollection.id}

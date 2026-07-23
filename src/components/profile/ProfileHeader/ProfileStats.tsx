@@ -3,11 +3,8 @@ import type { Profile } from "../../../api/user.api";
 
 interface ProfileStatsProps {
   profile: Profile;
-
   isOwner: boolean;
-
   activeTab: "reviews" | "collections" | "saved" | "places";
-
   onTabChange: (tab: "reviews" | "collections" | "saved" | "places") => void;
 }
 
@@ -15,29 +12,25 @@ const stats = [
   {
     key: "reviews",
     label: "Reviews",
-    color: "text-yellow-500",
-    icon: <Star />,
+    icon: <Star size={24} strokeWidth={1.5} />,
     value: (profile: Profile) => profile._count.reviews,
   },
   {
     key: "collections",
-    label: "Collection",
-    color: "text-blue-500",
-    icon: <Folder />,
+    label: "Collections",
+    icon: <Folder size={24} strokeWidth={1.5} />,
     value: (profile: Profile) => profile._count.collections,
   },
   {
     key: "saved",
     label: "Saved",
-    color: "text-red-500",
-    icon: <Heart />,
+    icon: <Heart size={24} strokeWidth={1.5} />,
     value: (profile: Profile) => profile._count.favorites,
   },
   {
     key: "places",
     label: "Places",
-    color: "text-green-500",
-    icon: <MapPin />,
+    icon: <MapPin size={24} strokeWidth={1.5} />,
     value: (profile: Profile) => profile._count.places,
   },
 ] as const;
@@ -53,42 +46,37 @@ const ProfileStats = ({
     : stats.filter((stat) => stat.key !== "saved");
 
   return (
-    <div className="mt-8">
-      <div className="grid grid-cols-2 gap-4 p-2 mb-10">
+    <div className="mt-6">
+      <div className="flex justify-around items-center py-4 border-t border-zinc-200">
         {visibleStats.map((stat) => (
-          <div
-            key={stat.key}
-            className="bg-zinc-100 p-3 rounded-lg flex-col items-center justify-center"
-          >
-            <h3 className={`text-2xl text-center font-bold`}>
+          <div key={stat.key} className="flex flex-col items-center">
+            <span className="text-lg font-bold text-black">
               {stat.value(profile)}
-            </h3>
-
-            <p className="text-center">{stat.label}</p>
+            </span>
+            <span className="text-xs text-zinc-500">{stat.label}</span>
           </div>
         ))}
       </div>
 
-      <div className={`grid ${isOwner ? "grid-cols-4" : "grid-cols-4"}`}>
-        {stats.map((stat) => (
-          <button
-            key={stat.key}
-            onClick={() => onTabChange(stat.key)}
-            className={`py-2 transition ${
-              activeTab === stat.key
-                ? "border-b border-blue-500"
-                : "hover:bg-zinc-50"
-            }`}
-          >
-            <p
-              className={`mt-1 text-sm text-center flex items-center justify-center ${
-                activeTab === stat.key ? "text-blue-600" : "text-zinc-500"
+      <div className="flex justify-around border-t border-zinc-200">
+        {stats.map((stat) => {
+          const isActive = activeTab === stat.key;
+          return (
+            <button
+              key={stat.key}
+              onClick={() => onTabChange(stat.key)}
+              className={`flex-1 py-3 flex justify-center transition-colors ${
+                isActive
+                  ? "border-t border-black -mt-[1px] text-black"
+                  : "text-zinc-400 hover:text-zinc-600"
               }`}
             >
-              {stat.icon}
-            </p>
-          </button>
-        ))}
+              <div className={isActive ? "text-black" : "text-zinc-400"}>
+                {stat.icon}
+              </div>
+            </button>
+          );
+        })}
       </div>
     </div>
   );

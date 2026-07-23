@@ -1,8 +1,7 @@
-import { Heart, Star, Share2, FolderPlus } from "lucide-react";
+import { Heart, MessageCircle, Send, Bookmark } from "lucide-react";
 
 interface FeedActionsProps {
   place: any;
-
   onFavorite?: () => void;
   onReview?: () => void;
   onShare?: () => void;
@@ -17,54 +16,38 @@ const FeedActions = ({
   onCollection,
 }: FeedActionsProps) => {
   return (
-    <div className="space-y-4 px-5 py-4">
+    <div className="px-4 py-3 space-y-2">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={onFavorite}
-            className="rounded-full p-2 transition hover:bg-zinc-100"
-          >
+        <div className="flex items-center gap-4 -ml-2">
+          <button onClick={onFavorite} className="p-2 transition-transform active:scale-75">
             <Heart
-              size={23}
-              className={place.isFavorite ? "fill-red-500 text-red-500" : ""}
+              size={26}
+              strokeWidth={1.5}
+              className={place.isFavorite ? "fill-red-500 text-red-500" : "text-black"}
             />
           </button>
 
-          <button
-            onClick={onReview}
-            className="rounded-full p-2 transition hover:bg-zinc-100"
-          >
-            <Star
-              size={22}
-              className={
-                place.isReviewed ? "fill-yellow-400 text-yellow-400" : ""
-              }
-            />
+          <button onClick={onReview} className="p-2 transition-transform active:scale-75">
+            <MessageCircle size={25} strokeWidth={1.5} className="text-black" />
           </button>
 
-          <button
-            onClick={onShare}
-            className="rounded-full p-2 transition hover:bg-zinc-100"
-          >
-            <Share2 size={22} />
+          <button onClick={onShare} className="p-2 transition-transform active:scale-75">
+            <Send size={26} strokeWidth={1.5} className="text-black" />
           </button>
         </div>
 
-        <button
-          onClick={onCollection}
-          className="rounded-full p-2 transition hover:bg-zinc-100"
-        >
-          <FolderPlus
-            size={22}
-            className={place.isSaved ? "fill-blue-500 text-blue-500" : ""}
+        <button onClick={onCollection} className="p-2 -mr-2 transition-transform active:scale-75">
+          <Bookmark
+            size={26}
+            strokeWidth={1.5}
+            className={place.isSaved ? "fill-amber-300 text-amber-300" : "text-black"}
           />
-          
         </button>
       </div>
-      <div className="space-y-1">
-        <p className="text-sm text-zinc-900 flex items-center gap-2">
-          <Star className="text-amber-400 fill-amber-400" />{" "}
-          {place.averageRating ?? "New"} ({place.totalReviews ?? 0} Reviews)
+
+      <div>
+        <p className="text-sm font-semibold text-black">
+          {place.totalReviews ?? 0} reviews • {place.averageRating ?? "New"} average
         </p>
       </div>
     </div>
