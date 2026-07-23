@@ -1,4 +1,4 @@
-import { Star, MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { useMyPlaces } from "../../../hooks/useMyPlaces";
 import { useState } from "react";
 import { useDeletePlace } from "../../../hooks/useDeletePlace";
