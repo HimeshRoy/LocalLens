@@ -31,7 +31,7 @@ const BottomNavigation = () => {
   ];
 
   return (
-    <nav className="fixed bottom-5 left-1/2 z-50 w-[calc(100%-24px)] max-w-md -translate-x-1/2">
+    <nav className="fixed bottom-5 left-1/2 z-50 w-[calc(100%-24px)] max-w-md -translate-x-1/2 md:hidden">
       <div className="clay-sm flex h-16 items-center justify-around rounded-full px-3">
         {navItems.map((item) => {
           const Icon = item.icon;

@@ -22,6 +22,7 @@ import CreateCategoryPage from "../pages/admin/CreateCategoryPage";
 import UsersPage from "../pages/admin/UsersPage";
 import PlacesPage from "../pages/admin/PlacesPage";
 import AdminPlaceDetailsPage from "../pages/admin/AdminPlaceDetailsPage";
+import MapPage from "../pages/MapPage";
 
 const AppRouter = () => {
   return (
@@ -31,6 +32,7 @@ const AppRouter = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<RegisterPage />} />
         <Route path="/search" element={<SearchPage />} />
+        <Route path="/map" element={<MapPage />} />
         <Route path="/places/:slug" element={<PlaceDetailsPage />} />
         <Route path="/ai" element={<AIPage />} />
         <Route path="/users/:username" element={<PublicProfilePage />} />

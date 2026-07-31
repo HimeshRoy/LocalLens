@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import MainLayout from "../layouts/MainLayout";
 import { useCategories } from "../hooks/useCategories";
 import { useLocation } from "../hooks/useLocation";
-import { Locate } from "lucide-react";
 import { useDebounce } from "../hooks/useDebounce";
+import { Locate, MapPin } from "lucide-react";
+import LocationPickerMap from "../components/map/LocationPickerMap";
 import { useSearchLocation } from "../hooks/useSearchLocation";
 import { useUpdatePlace } from "../hooks/useUpdatePlace";
 import { usePlaceById } from "../hooks/usePlaceById";
@@ -25,6 +26,8 @@ const EditPlacePage = () => {
   const { data: categories, isPending } = useCategories();
   const { loading, refreshLocation } = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
+  const [showMapPicker, setShowMapPicker] = useState(false);
+  const [isEditingAddress, setIsEditingAddress] = useState(false);
   const debouncedSearch = useDebounce(searchQuery);
   const navigate = useNavigate();
   const [priceRange, setPriceRange] = useState<PriceRange>("MODERATE");
@@ -336,77 +339,175 @@ const EditPlacePage = () => {
               <p className="mt-2 text-zinc-500">
                 Tell us where this place is located.
               </p>
+              {!showMapPicker ? (
+                <>
+                  <div className="mt-8 grid gap-4 sm:grid-cols-2">
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        const location = await refreshLocation();
+                        if (!location) return;
+                        setSelectedLocation({
+                          displayName: `${location.city}, ${location.state}, ${location.country}`,
+                          city: location.city,
+                          state: location.state,
+                          country: location.country,
+                          latitude: location.latitude,
+                          longitude: location.longitude,
+                        });
+                      }}
+                      className="flex w-full items-center justify-center gap-3 rounded-2xl bg-blue-600 py-4 font-semibold text-white transition hover:bg-blue-700"
+                    >
+                      <Locate />{" "}
+                      {loading ? "Detecting..." : "Current Location"}
+                    </button>
 
-              <button
-                type="button"
-                onClick={async () => {
-                  const location = await refreshLocation();
-
-                  if (!location) return;
-
-                  setSelectedLocation({
-                    displayName: `${location.city}, ${location.state}, ${location.country}`,
-                    city: location.city,
-                    state: location.state,
-                    country: location.country,
-                    latitude: location.latitude,
-                    longitude: location.longitude,
-                  });
-                }}
-                className="mt-8 flex w-full items-center justify-center gap-3 rounded-2xl bg-blue-600 py-4 font-semibold text-white transition hover:bg-blue-700"
-              >
-                <Locate />{" "}
-                {loading ? "Detecting location..." : "Use Current Location"}
-              </button>
-
-              <div className="mt-6">
-                <label className="mb-2 block text-sm font-medium text-zinc-700">
-                  Search Address
-                </label>
-
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search city, area or address..."
-                  className="h-14 w-full rounded-2xl border border-zinc-200 bg-white px-4 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
-                />
-
-                {searchResults?.data?.length > 0 && (
-                  <div className="mt-3 overflow-hidden rounded-2xl border border-zinc-200 bg-white">
-                    {searchResults.data.map((location: any) => (
-                      <button
-                        key={`${location.latitude}-${location.longitude}`}
-                        type="button"
-                        onClick={() => {
-                          setSelectedLocation(location);
-                          setSearchQuery("");
-                        }}
-                        className="w-full border-b border-zinc-100 p-4 text-left transition hover:bg-zinc-50 last:border-b-0"
-                      >
-                        <p className="font-medium">📍 {location.displayName}</p>
-                      </button>
-                    ))}
+                    <button
+                      type="button"
+                      onClick={() => setShowMapPicker(true)}
+                      className="flex w-full items-center justify-center gap-3 rounded-2xl border-2 border-zinc-200 bg-white py-4 font-semibold text-zinc-700 transition hover:border-blue-500 hover:text-blue-600"
+                    >
+                      <MapPin /> Pick on Map
+                    </button>
                   </div>
-                )}
-              </div>
 
-              {selectedLocation && (
-                <div className="mt-6 rounded-3xl border border-blue-200 bg-blue-50 p-5">
-                  <div>
+                  <div className="mt-6">
+                    <label className="mb-2 block text-sm font-medium text-zinc-700">
+                      Search Address
+                    </label>
+
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search city, area or address..."
+                      className="h-14 w-full rounded-2xl border border-zinc-200 bg-white px-4 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                    />
+
+                    {searchResults?.data?.length > 0 && (
+                      <div className="mt-3 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+                        {searchResults.data.map((location: any) => (
+                          <button
+                            key={`${location.latitude}-${location.longitude}`}
+                            type="button"
+                            onClick={() => {
+                              const addressParts = location.displayName
+                                ? location.displayName.split(",").map((p: string) => p.trim())
+                                : [];
+
+                              const extractedCity = addressParts[0] || "";
+                              const extractedState = addressParts[1] || "";
+                              const extractedCountry = addressParts[addressParts.length - 1] || "";
+
+                              setSelectedLocation({
+                                displayName: location.displayName,
+                                city: location.city || extractedCity || "Unknown City",
+                                state: location.state || extractedState || "Unknown State",
+                                country: location.country || extractedCountry || "Unknown Country",
+                                latitude: location.latitude,
+                                longitude: location.longitude,
+                              });
+                              setSearchQuery("");
+                            }}
+                            className="w-full border-b border-zinc-100 p-4 text-left transition hover:bg-zinc-50 last:border-b-0"
+                          >
+                            <p className="font-medium">📍 {location.displayName}</p>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <div className="mt-6">
+                  <LocationPickerMap 
+                    onCancel={() => setShowMapPicker(false)}
+                    onSelectLocation={(loc) => {
+                      setSelectedLocation(loc);
+                      setShowMapPicker(false);
+                      setIsEditingAddress(false);
+                    }}
+                  />
+                </div>
+              )}
+              {selectedLocation && !showMapPicker && (
+                <div className="mt-6 rounded-3xl border border-blue-200 bg-blue-50 p-5 animate-in fade-in duration-300">
+                  <div className="flex items-center justify-between mb-4">
                     <p className="text-sm font-medium text-blue-700">
                       Selected Location
                     </p>
-
-                    <h3 className="mt-2 text-lg text-zinc-900">
-                      {selectedLocation.displayName}
-                    </h3>
-
-                    <p className="mt-3 text-xs text-zinc-500">
-                      {selectedLocation.latitude.toFixed(6)},{" "}
-                      {selectedLocation.longitude.toFixed(6)}
-                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setIsEditingAddress(!isEditingAddress)}
+                      className="text-xs font-semibold text-blue-600 hover:underline px-2 py-1 bg-white rounded-lg border border-blue-200"
+                    >
+                      {isEditingAddress ? "Save Address" : "Edit Manually"}
+                    </button>
                   </div>
+
+                  {isEditingAddress ? (
+                    <div className="space-y-3">
+                      <div>
+                        <label className="text-xs text-zinc-500 mb-1 block">Place/Address Name</label>
+                        <input 
+                          type="text" 
+                          value={selectedLocation.displayName} 
+                          onChange={(e) => setSelectedLocation({...selectedLocation, displayName: e.target.value})}
+                          placeholder="e.g. Hidden Waterfall Trail"
+                          className="w-full rounded-xl border border-blue-200 px-3 py-2 text-sm outline-none focus:border-blue-500 bg-white"
+                        />
+                      </div>
+                      
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                        <div>
+                          <label className="text-xs text-zinc-500 mb-1 block">City</label>
+                          <input 
+                            type="text" 
+                            value={selectedLocation.city} 
+                            onChange={(e) => setSelectedLocation({...selectedLocation, city: e.target.value})}
+                            placeholder="City"
+                            className="w-full rounded-xl border border-blue-200 px-3 py-2 text-sm outline-none focus:border-blue-500 bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs text-zinc-500 mb-1 block">State</label>
+                          <input 
+                            type="text" 
+                            value={selectedLocation.state} 
+                            onChange={(e) => setSelectedLocation({...selectedLocation, state: e.target.value})}
+                            placeholder="State"
+                            className="w-full rounded-xl border border-blue-200 px-3 py-2 text-sm outline-none focus:border-blue-500 bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs text-zinc-500 mb-1 block">Country</label>
+                          <input 
+                            type="text" 
+                            value={selectedLocation.country} 
+                            onChange={(e) => setSelectedLocation({...selectedLocation, country: e.target.value})}
+                            placeholder="Country"
+                            className="w-full rounded-xl border border-blue-200 px-3 py-2 text-sm outline-none focus:border-blue-500 bg-white"
+                          />
+                        </div>
+                      </div>
+                      <p className="mt-2 text-xs text-zinc-500">
+                        📍 Coordinates: {selectedLocation.latitude.toFixed(6)}, {selectedLocation.longitude.toFixed(6)} (Locked to Map Pin)
+                      </p>
+                    </div>
+                  ) : (
+                    <div>
+                      <h3 className="text-lg text-zinc-900">
+                        {selectedLocation.displayName}
+                      </h3>
+                      <p className="text-sm text-zinc-600 mt-1">
+                        {selectedLocation.city}, {selectedLocation.state}, {selectedLocation.country}
+                      </p>
+                      <p className="mt-3 text-xs text-zinc-500">
+                        {selectedLocation.latitude.toFixed(6)},{" "}
+                        {selectedLocation.longitude.toFixed(6)}
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -421,10 +522,10 @@ const EditPlacePage = () => {
 
                 <button
                   type="button"
-                  disabled={!selectedLocation}
+                  disabled={!selectedLocation || showMapPicker}
                   onClick={() => setStep(3)}
                   className={`rounded-2xl px-6 py-3 font-semibold text-white transition ${
-                    selectedLocation
+                    selectedLocation && !showMapPicker
                       ? "bg-blue-600 hover:bg-blue-700"
                       : "cursor-not-allowed bg-zinc-300"
                   }`}

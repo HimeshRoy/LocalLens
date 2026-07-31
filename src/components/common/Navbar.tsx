@@ -10,8 +10,8 @@ interface NavbarProps {
 const Navbar = ({ city, loading, refreshLocation }: NavbarProps) => {
   return (
     <header className="sticky top-0 z-50 h-[72px] bg-white">
-      <div className="mx-auto flex h-full max-w-3xl items-center justify-between px-4">
-        <h1 className="text-2xl font-bold tracking-tight text-blue-700">
+      <div className="mx-auto flex h-full max-w-3xl items-center justify-between px-4 md:justify-end">
+        <h1 className="text-2xl font-bold tracking-tight text-blue-700 md:hidden">
            <a href="/">
             LocalLens
             </a>

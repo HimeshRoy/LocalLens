@@ -1,5 +1,6 @@
-import { ChevronDown, MapPin, LocateFixed } from "lucide-react";
+import { ChevronDown, MapPin, LocateFixed, Map } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import type { LocationData } from "../../types/location.types";
 
 interface LocationPickerProps {
@@ -34,7 +35,6 @@ const LocationPicker = ({
       </button>
 
       {isOpen && (
-        // Redesign: Replaced .clay with a clean bg-white, thin border, and standard subtle shadow
         <div className="absolute right-0 mt-3 w-64 bg-white border border-zinc-200 shadow-md rounded-xl p-4 z-50">
           <div className="flex items-center gap-3 mb-3 pb-3 border-b border-zinc-100">
              <div className="bg-zinc-100 p-2 rounded-full">
@@ -57,6 +57,14 @@ const LocationPicker = ({
             <LocateFixed size={18} strokeWidth={1.5} />
             <span>Use Current Location</span>
           </button>
+          <Link
+            to="/map"
+            onClick={() => setIsOpen(false)}
+            className="mt-1 flex w-full items-center gap-3 rounded-lg p-2 transition hover:bg-zinc-50 active:bg-zinc-100 text-black text-sm font-medium"
+          >
+            <Map size={18} strokeWidth={1.5} />
+            <span>Explore Map</span>
+          </Link>
         </div>
       )}
     </div>

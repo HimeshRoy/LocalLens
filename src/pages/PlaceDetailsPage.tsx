@@ -24,6 +24,7 @@ import { useAddFavorite } from "../hooks/useAddFavorite";
 import { useRemoveFavorite } from "../hooks/useRemoveFavorite";
 import { useNavigate, useLocation } from "react-router-dom";
 import CollectionModal from "../components/collection/CollectionModal";
+import DirectionsMap from "../components/map/DirectionsMap";
 
 const PlaceDetailsPage = () => {
   const { slug } = useParams();
@@ -48,6 +49,8 @@ const PlaceDetailsPage = () => {
   const [editComment, setEditComment] = useState("");
   const [collectionModalOpen, setCollectionModalOpen] = useState(false);
 
+  const [showDirections, setShowDirections] = useState(false);
+
   const { data, isLoading, error } = usePlace(slug);
 
   const placeId = data?.data?.id;
@@ -55,18 +58,18 @@ const PlaceDetailsPage = () => {
   const { data: reviewData, isPending: reviewsLoading } =
     usePlaceReviews(placeId);
 
-    useEffect(() => {
-  if (location.hash === "#reviews") {
-    const section = document.getElementById("reviews");
+  useEffect(() => {
+    if (location.hash === "#reviews") {
+      const section = document.getElementById("reviews");
 
-    if (section) {
-      section.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
+      if (section) {
+        section.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
     }
-  }
-}, [location]);
+  }, [location]);
 
   if (isLoading) {
     return (
@@ -137,7 +140,7 @@ const PlaceDetailsPage = () => {
               </div>
 
               <p className="mt-3 flex items-center gap-2 text-zinc-500">
-                📍 {place.city}, {place.state}, {place.country}
+                📍 {place.address} , {place.city}, {place.state}, {place.country}
               </p>
 
               <div className="mt-5 flex flex-wrap gap-3">
@@ -159,15 +162,13 @@ const PlaceDetailsPage = () => {
         </div>
 
         <div className="mt-8 flex flex-wrap gap-4">
-          <a
-            href={`https://www.google.com/maps/search/?api=1&query=${place.latitude},${place.longitude}`}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700 "
+          <button
+            onClick={() => setShowDirections(!showDirections)}
+            className="flex items-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700 cursor-pointer"
           >
             <Navigation size={18} />
-            Directions
-          </a>
+            {showDirections ? "Hide Directions" : "Directions"}
+          </button>
 
           {place.phone && (
             <a
@@ -253,6 +254,17 @@ const PlaceDetailsPage = () => {
             <Bookmark className="fill-amber-300 text-amber-300" /> Collection
           </button>
         </div>
+
+        {showDirections && (
+          <section className="mt-8 rounded-3xl border border-zinc-200 bg-white p-6 clay animate-in fade-in slide-in-from-top-4 duration-300">
+            <h2 className="mb-4 text-xl font-bold">Route to {place.name}</h2>
+            <DirectionsMap
+              destinationLat={place.latitude}
+              destinationLng={place.longitude}
+              destinationName={place.name}
+            />
+          </section>
+        )}
 
         {place.description && (
           <section className="mt-10 rounded-3xl border border-zinc-200 bg-white p-6 clay mb-8">
