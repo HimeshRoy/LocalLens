@@ -14,10 +14,10 @@ export const PRICE_RANGES = [
 export type PriceRange = (typeof PRICE_RANGES)[number];
 
 export const PRICE_RANGE_LABELS: Record<PriceRange, string> = {
-  BUDGET: "₹ Budget",
-  MODERATE: "₹₹ Moderate",
-  PREMIUM: "₹₹₹ Premium",
-  LUXURY: "₹₹₹₹ Luxury",
+  BUDGET: "Budget",
+  MODERATE: "Moderate",
+  PREMIUM: "Premium",
+  LUXURY: "Luxury",
 };
 
 export interface Place {

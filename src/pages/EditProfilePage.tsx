@@ -94,10 +94,10 @@ const EditPlacePage = () => {
       description: description.trim(),
       categoryId,
 
-      address: selectedLocation.displayName || "Unknown Address",
-      city: selectedLocation.city || "Unknown City",
-      state: selectedLocation.state || "Unknown State",
-      country: selectedLocation.country || "Unknown Country",
+      address: selectedLocation.displayName || "Address",
+      city: selectedLocation.city || "City",
+      state: selectedLocation.state || "State",
+      country: selectedLocation.country || "Country",
 
       latitude: selectedLocation.latitude,
       longitude: selectedLocation.longitude,

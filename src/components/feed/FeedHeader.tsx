@@ -44,7 +44,7 @@ const FeedHeader = ({ place }: FeedHeaderProps) => {
           <div className="mt-1 flex items-center gap-1 text-xs text-zinc-500">
             <MapPin size={12} />
 
-            <span>
+            <span className="flex gap-2">
               {place.city}, {place.state}
               {place.distance != null && (
                 <>
