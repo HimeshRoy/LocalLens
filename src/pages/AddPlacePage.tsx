@@ -29,8 +29,7 @@ const AddPlacePage = () => {
 
   const [images, setImages] = useState<File[]>([]);
 
-  const { data: searchResults } =
-    useSearchLocation(debouncedSearch);
+  const { data: searchResults } = useSearchLocation(debouncedSearch);
 
   const [selectedLocation, setSelectedLocation] = useState<{
     displayName: string;
@@ -81,16 +80,15 @@ const AddPlacePage = () => {
       toast.error("Please select a location.");
       return;
     }
-
     const payload = {
       name: placeName.trim(),
       description: description.trim(),
       categoryId,
 
-      address: selectedLocation.displayName,
-      city: selectedLocation.city,
-      state: selectedLocation.state,
-      country: selectedLocation.country,
+      address: selectedLocation.displayName || "Unknown Address",
+      city: selectedLocation.city || "Unknown City",
+      state: selectedLocation.state || "Unknown State",
+      country: selectedLocation.country || "Unknown Country",
 
       latitude: selectedLocation.latitude,
       longitude: selectedLocation.longitude,
@@ -334,7 +332,24 @@ const AddPlacePage = () => {
                         key={`${location.latitude}-${location.longitude}`}
                         type="button"
                         onClick={() => {
-                          setSelectedLocation(location);
+                          // FIX 2: Parse the displayName string into city, state, and country parts
+                          const addressParts = location.displayName
+                            ? location.displayName.split(",").map((p: string) => p.trim())
+                            : [];
+
+                          // Safely assign extracted values or use our fallbacks
+                          const extractedCity = addressParts[0] || "";
+                          const extractedState = addressParts[1] || "";
+                          const extractedCountry = addressParts[addressParts.length - 1] || "";
+
+                          setSelectedLocation({
+                            displayName: location.displayName,
+                            city: location.city || extractedCity || "Unknown City",
+                            state: location.state || extractedState || "Unknown State",
+                            country: location.country || extractedCountry || "Unknown Country",
+                            latitude: location.latitude,
+                            longitude: location.longitude,
+                          });
                           setSearchQuery("");
                         }}
                         className="w-full border-b border-zinc-100 p-4 text-left transition hover:bg-zinc-50 last:border-b-0"
@@ -554,12 +569,10 @@ const AddPlacePage = () => {
                   onClick={handleCreatePlace}
                   className="rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700"
                 >
-                  {
-  createPlaceMutation.isPending ||
-  uploadPlaceImagesMutation.isPending
-    ? "Creating..."
-    : "Create Place"
-}
+                  {createPlaceMutation.isPending ||
+                  uploadPlaceImagesMutation.isPending
+                    ? "Creating..."
+                    : "Create Place"}
                 </button>
               </div>
             </div>

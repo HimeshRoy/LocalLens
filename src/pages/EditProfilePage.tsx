@@ -1,37 +1,666 @@
+import { useEffect, useState } from "react";
 import MainLayout from "../layouts/MainLayout";
-import EditProfileForm from "../components/profile/EditProfileForm";
-import { ArrowLeft } from "lucide-react";
+import { useCategories } from "../hooks/useCategories";
+import { useLocation } from "../hooks/useLocation";
+import { Locate } from "lucide-react";
+import { useDebounce } from "../hooks/useDebounce";
+import { useSearchLocation } from "../hooks/useSearchLocation";
+import { useUpdatePlace } from "../hooks/useUpdatePlace";
+import { usePlaceById } from "../hooks/usePlaceById";
+import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import {
+  PRICE_RANGES,
+  type PriceRange,
+  PRICE_RANGE_LABELS,
+} from "../types/place.types";
 import { useNavigate } from "react-router-dom";
+import { useUploadPlaceImages } from "../hooks/useUploadPlaceImages";
 
-const EditProfilePage = () => {
+const EditPlacePage = () => {
+  const [step, setStep] = useState(1);
+  const [placeName, setPlaceName] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [description, setDescription] = useState("");
+  const { data: categories, isPending } = useCategories();
+  const { loading, refreshLocation } = useLocation();
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearch = useDebounce(searchQuery);
   const navigate = useNavigate();
+  const [priceRange, setPriceRange] = useState<PriceRange>("MODERATE");
+
+  const [newImages, setNewImages] = useState<File[]>([]);
+
+  const { data: searchResults } = useSearchLocation(debouncedSearch);
+
+  const [selectedLocation, setSelectedLocation] = useState<{
+    displayName: string;
+    city: string;
+    state: string;
+    country: string;
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+
+  const { id } = useParams();
+
+  const { data, isLoading } = usePlaceById(id!);
+  const place = data?.data;
+
+  const updatePlaceMutation = useUpdatePlace();
+  const uploadPlaceImagesMutation = useUploadPlaceImages();
+
+  const MAX_IMAGES = 10;
+  const MAX_SIZE = 5 * 1024 * 1024;
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+
+    if (!files.length) return;
+
+    if (newImages.length + files.length > MAX_IMAGES) {
+      toast.error(`Maximum ${MAX_IMAGES} images allowed.`);
+      return;
+    }
+
+    const validFiles: File[] = [];
+
+    for (const file of files) {
+      if (!file.type.startsWith("image/")) {
+        toast.error(`${file.name} is not an image.`);
+        continue;
+      }
+
+      if (file.size > MAX_SIZE) {
+        toast.error(`${file.name} exceeds 5MB.`);
+        continue;
+      }
+
+      validFiles.push(file);
+    }
+
+    setNewImages((prev) => [...prev, ...validFiles]);
+  };
+
+  const handleUpdatePlace = async () => {
+    if (!place) return;
+    if (!selectedLocation) {
+      toast.error("Please select a location.");
+      return;
+    }
+
+    const payload = {
+      name: placeName.trim(),
+      description: description.trim(),
+      categoryId,
+
+      address: selectedLocation.displayName || "Unknown Address",
+      city: selectedLocation.city || "Unknown City",
+      state: selectedLocation.state || "Unknown State",
+      country: selectedLocation.country || "Unknown Country",
+
+      latitude: selectedLocation.latitude,
+      longitude: selectedLocation.longitude,
+
+      priceRange,
+    };
+
+    try {
+      await updatePlaceMutation.mutateAsync({
+        placeId: place.id,
+        payload,
+      });
+
+      if (newImages.length > 0) {
+        await uploadPlaceImagesMutation.mutateAsync({
+          placeId: place.id,
+          files: newImages,
+        });
+      }
+
+      toast.success("Place updated successfully!", {
+        onClose: () => navigate(`/places/${place.slug}`),
+        autoClose: 1500,
+      });
+    } catch (error: any) {
+      toast.error(error.response?.data?.message ?? "Failed to update place.");
+    }
+  };
+
+  useEffect(() => {
+    if (!place) return;
+
+    setPlaceName(place.name);
+    setCategoryId(place.category.id);
+    setDescription(place.description ?? "");
+    setPriceRange(place.priceRange);
+
+    setSelectedLocation({
+      displayName: place.address,
+      city: place.city,
+      state: place.state,
+      country: place.country,
+      latitude: place.latitude,
+      longitude: place.longitude,
+    });
+  }, [place]);
+
+  if (isLoading) {
+    return (
+      <MainLayout>
+        <div className="py-20 text-center">Loading place...</div>
+      </MainLayout>
+    );
+  }
+
+  if (!place) {
+    return (
+      <MainLayout>
+        <div className="py-20 text-center">Place not found.</div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout>
-      <div className="mx-auto max-w-2xl">
+      <div className="mx-auto max-w-2xl pb-15 px-4">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold">Edit Place</h1>
 
-        <div className="sticky top-0 z-20 flex items-center justify-between px-4 py-3">
-
-          <button
-            onClick={() => navigate(-1)}
-            className="rounded-full p-2 hover:bg-zinc-100"
-          >
-            <ArrowLeft size={22} />
-          </button>
-
-          <h1 className="text-lg font-semibold">
-            Edit Profile
-          </h1>
-
-          <div className="w-10" />
-
+          <p className="mt-2 text-zinc-500">
+            Update information about {place.name}
+          </p>
         </div>
 
-        <EditProfileForm />
+        <div className="mb-6">
+          <p className="text-sm font-medium text-blue-600">Step {step} of 4</p>
 
+          <div className="mt-2 h-2 overflow-hidden rounded-full bg-zinc-200">
+            <div
+              className="h-full rounded-full bg-blue-600 transition-all duration-300"
+              style={{
+                width: `${(step / 4) * 100}%`,
+              }}
+            />
+          </div>
+        </div>
+
+        <div className="clay rounded-3xl p-6">
+          {step === 1 && (
+            <div>
+              <h2 className="text-2xl font-bold text-zinc-900">
+                Basic Information
+              </h2>
+
+              <p className="mt-2 text-zinc-500">Tell us about this place.</p>
+
+              <div className="mt-8">
+                <label className="mb-2 block text-sm font-medium text-zinc-700">
+                  Place Name
+                </label>
+
+                <input
+                  type="text"
+                  value={placeName}
+                  onChange={(e) => setPlaceName(e.target.value)}
+                  placeholder="e.g. Blue Tokai Coffee Roasters"
+                  className="h-14 w-full rounded-2xl border border-zinc-200 bg-white px-4 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                />
+                <div className="mt-2 flex justify-between text-sm">
+                  <span
+                    className={
+                      placeName.trim().length >= 3
+                        ? "text-green-600"
+                        : "text-zinc-500"
+                    }
+                  >
+                    {placeName.trim().length >= 3
+                      ? "✓ Looks good"
+                      : "Minimum 3 characters"}
+                  </span>
+
+                  <span className="text-zinc-400">{placeName.length}/100</span>
+                </div>
+                <div className="mt-8">
+                  <label className="mb-3 block text-sm font-medium text-zinc-700">
+                    Category
+                  </label>
+
+                  {isPending ? (
+                    <p className="text-sm text-zinc-500">
+                      Loading categories...
+                    </p>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-3">
+                      {categories?.data.map((category) => (
+                        <button
+                          key={category.id}
+                          type="button"
+                          onClick={() => setCategoryId(category.id)}
+                          className={`rounded-2xl border p-3 text-left transition ${
+                            categoryId === category.id
+                              ? "border-green-600 bg-blue-50"
+                              : "border-zinc-200 hover:border-blue-300"
+                          }`}
+                        >
+                          <p className="font-semibold text-center">
+                            {category.name}
+                          </p>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div className="mt-8">
+                  <label className="mb-2 block text-sm font-medium text-zinc-700">
+                    Description
+                  </label>
+
+                  <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    rows={5}
+                    maxLength={500}
+                    placeholder="Tell people what makes this place special..."
+                    className="w-full rounded-2xl border border-zinc-200 bg-white p-4 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100 resize-none"
+                  />
+
+                  <div className="mt-2 flex justify-between text-sm">
+                    <span
+                      className={
+                        description.trim().length >= 20
+                          ? "text-green-600"
+                          : "text-zinc-500"
+                      }
+                    >
+                      {description.trim().length >= 20
+                        ? "✓ Good description"
+                        : "Minimum 20 characters"}
+                    </span>
+
+                    <span className="text-zinc-400">
+                      {description.length}/500
+                    </span>
+                  </div>
+                </div>
+                <div className="mt-8">
+                  <label className="mb-3 block text-sm font-medium text-zinc-700">
+                    Price Range
+                  </label>
+
+                  <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
+                    {PRICE_RANGES.map((price) => (
+                      <button
+                        key={price}
+                        type="button"
+                        onClick={() => setPriceRange(price)}
+                        className={`rounded-2xl border p-4 transition ${
+                          priceRange === price
+                            ? "border-blue-600 bg-blue-50"
+                            : "border-zinc-200 hover:border-blue-300"
+                        }`}
+                      >
+                        {PRICE_RANGE_LABELS[price]}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 flex justify-end">
+                <button
+                  type="button"
+                  disabled={
+                    placeName.trim().length < 3 ||
+                    !categoryId ||
+                    description.trim().length < 20
+                  }
+                  onClick={() => setStep(2)}
+                  className={`rounded-2xl px-6 py-3 font-semibold text-white transition ${
+                    placeName.trim().length >= 3 && categoryId
+                      ? "bg-blue-600 hover:bg-blue-700"
+                      : "cursor-not-allowed bg-zinc-300"
+                  }`}
+                >
+                  Next →
+                </button>
+              </div>
+            </div>
+          )}
+
+          {step === 2 && (
+            <div>
+              <h2 className="text-2xl font-bold text-zinc-900">Location</h2>
+
+              <p className="mt-2 text-zinc-500">
+                Tell us where this place is located.
+              </p>
+
+              <button
+                type="button"
+                onClick={async () => {
+                  const location = await refreshLocation();
+
+                  if (!location) return;
+
+                  setSelectedLocation({
+                    displayName: `${location.city}, ${location.state}, ${location.country}`,
+                    city: location.city,
+                    state: location.state,
+                    country: location.country,
+                    latitude: location.latitude,
+                    longitude: location.longitude,
+                  });
+                }}
+                className="mt-8 flex w-full items-center justify-center gap-3 rounded-2xl bg-blue-600 py-4 font-semibold text-white transition hover:bg-blue-700"
+              >
+                <Locate />{" "}
+                {loading ? "Detecting location..." : "Use Current Location"}
+              </button>
+
+              <div className="mt-6">
+                <label className="mb-2 block text-sm font-medium text-zinc-700">
+                  Search Address
+                </label>
+
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search city, area or address..."
+                  className="h-14 w-full rounded-2xl border border-zinc-200 bg-white px-4 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                />
+
+                {searchResults?.data?.length > 0 && (
+                  <div className="mt-3 overflow-hidden rounded-2xl border border-zinc-200 bg-white">
+                    {searchResults.data.map((location: any) => (
+                      <button
+                        key={`${location.latitude}-${location.longitude}`}
+                        type="button"
+                        onClick={() => {
+                          // FIX 2: Parse the displayName string into city, state, and country parts
+                          const addressParts = location.displayName
+                            ? location.displayName.split(",").map((p: string) => p.trim())
+                            : [];
+
+                          const extractedCity = addressParts[0] || "";
+                          const extractedState = addressParts[1] || "";
+                          const extractedCountry = addressParts[addressParts.length - 1] || "";
+
+                          setSelectedLocation({
+                            displayName: location.displayName,
+                            city: location.city || extractedCity || "Unknown City",
+                            state: location.state || extractedState || "Unknown State",
+                            country: location.country || extractedCountry || "Unknown Country",
+                            latitude: location.latitude,
+                            longitude: location.longitude,
+                          });
+                          setSearchQuery("");
+                        }}
+                        className="w-full border-b border-zinc-100 p-4 text-left transition hover:bg-zinc-50 last:border-b-0"
+                      >
+                        <p className="font-medium">📍 {location.displayName}</p>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {selectedLocation && (
+                <div className="mt-6 rounded-3xl border border-blue-200 bg-blue-50 p-5">
+                  <div>
+                    <p className="text-sm font-medium text-blue-700">
+                      Selected Location
+                    </p>
+
+                    <h3 className="mt-2 text-lg text-zinc-900">
+                      {selectedLocation.displayName}
+                    </h3>
+
+                    <p className="mt-3 text-xs text-zinc-500">
+                      {selectedLocation.latitude.toFixed(6)},{" "}
+                      {selectedLocation.longitude.toFixed(6)}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-8 flex justify-between">
+                <button
+                  type="button"
+                  onClick={() => setStep(1)}
+                  className="rounded-2xl border border-zinc-300 px-6 py-3 font-semibold"
+                >
+                  ← Back
+                </button>
+
+                <button
+                  type="button"
+                  disabled={!selectedLocation}
+                  onClick={() => setStep(3)}
+                  className={`rounded-2xl px-6 py-3 font-semibold text-white transition ${
+                    selectedLocation
+                      ? "bg-blue-600 hover:bg-blue-700"
+                      : "cursor-not-allowed bg-zinc-300"
+                  }`}
+                >
+                  Next →
+                </button>
+              </div>
+            </div>
+          )}
+
+          {step === 3 && (
+            <div>
+              <h2 className="text-2xl font-bold">Photos</h2>
+
+              <p className="mt-2 text-zinc-500">
+                Add more photos to this place.
+              </p>
+
+              {place.images.length > 0 && (
+                <div className="mb-8">
+                  <h3 className="mb-4 text-lg font-semibold">Current Photos</h3>
+
+                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                    {place.images.map((image: any) => (
+                      <div
+                        key={image.id}
+                        className="overflow-hidden rounded-2xl"
+                      >
+                        <img
+                          src={image.imageUrl}
+                          alt=""
+                          className="h-36 w-full object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <label
+                htmlFor="place-images"
+                className="mt-8 flex h-64 cursor-pointer flex-col items-center justify-center rounded-3xl border-2 border-dashed border-zinc-300 bg-zinc-50 transition hover:border-blue-500 hover:bg-blue-50"
+              >
+                <span className="text-5xl">📷</span>
+
+                <p className="mt-4 font-semibold">Click to upload photos</p>
+
+                <p className="mt-2 text-sm text-zinc-500">
+                  JPG, PNG, WEBP • Max 10 images
+                </p>
+              </label>
+
+              <input
+                id="place-images"
+                type="file"
+                multiple
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageChange}
+              />
+              {newImages.length > 0 && (
+                <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3">
+                  {newImages.map((image, index) => (
+                    <div
+                      key={index}
+                      className="relative overflow-hidden rounded-2xl"
+                    >
+                      <img
+                        src={URL.createObjectURL(image)}
+                        alt={`Preview ${index + 1}`}
+                        className="h-36 w-full object-cover"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setNewImages((prev) =>
+                            prev.filter((_, i) => i !== index),
+                          )
+                        }
+                        className="absolute right-2 top-2 rounded-full bg-red-600 px-2 py-1 text-xs text-white"
+                      >
+                        ✕
+                      </button>
+
+                      {index === 0 && (
+                        <div className="absolute bottom-2 left-2 rounded-full bg-blue-600 px-2 py-1 text-xs text-white">
+                          Cover
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+              <p className="mt-3 text-sm text-zinc-500 text-center">
+                {newImages.length} new photo(s) selected
+              </p>
+
+              <div className="mt-8 flex justify-between">
+                <button
+                  type="button"
+                  onClick={() => setStep(2)}
+                  className="rounded-2xl border border-zinc-300 px-6 py-3 font-semibold"
+                >
+                  ← Back
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setStep(4)}
+                  className={`rounded-2xl px-6 py-3 font-semibold text-white transition bg-blue-600`}
+                >
+                  Next →
+                </button>
+              </div>
+            </div>
+          )}
+
+          {step === 4 && (
+            <div>
+              <h2 className="text-2xl font-bold text-zinc-900">
+                Review Changes
+              </h2>
+
+              <p className="mt-2 text-zinc-500">
+                Review your changes before saving.
+              </p>
+
+              <div className="mt-8 space-y-6">
+                <div className="rounded-2xl border border-zinc-200 p-5">
+                  <h3 className="font-semibold">Basic Information</h3>
+
+                  <div className="mt-4 space-y-2 text-sm">
+                    <p>
+                      <span className="font-medium">Name:</span> {placeName}
+                    </p>
+
+                    <p>
+                      <span className="font-medium">Category:</span>{" "}
+                      {categories?.data.find((c) => c.id === categoryId)?.name}
+                    </p>
+
+                    <p>
+                      <span className="font-medium">Description:</span>
+                    </p>
+
+                    <p className="text-zinc-600 line-clamp-3">{description}</p>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-zinc-200 p-5">
+                  <h3 className="font-semibold">Location</h3>
+
+                  <p className="mt-3 text-sm">
+                    📍 {selectedLocation?.displayName}
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-zinc-200 p-5">
+                  {place.images.length > 0 && (
+                    <div className="mb-8">
+                      <h3 className="mb-4 text-lg font-semibold">
+                        Current Photos
+                      </h3>
+
+                      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                        {place.images.map((image: any) => (
+                          <div
+                            key={image.id}
+                            className="overflow-hidden rounded-2xl"
+                          >
+                            <img
+                              src={image.imageUrl}
+                              alt=""
+                              className="h-36 w-full object-cover"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  <h3 className="mt-4 font-semibold">
+                    New Photos ({newImages.length})
+                  </h3>
+
+                  <div className="mt-4 grid grid-cols-3 gap-3">
+                    {newImages.map((image, index) => (
+                      <img
+                        key={index}
+                        src={URL.createObjectURL(image)}
+                        alt=""
+                        className="h-24 w-full rounded-xl object-cover"
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 flex justify-between">
+                <button
+                  type="button"
+                  onClick={() => setStep(3)}
+                  className="rounded-2xl border border-zinc-300 px-6 py-3 font-semibold"
+                >
+                  ← Back
+                </button>
+
+                <button
+                  type="button"
+                  disabled={updatePlaceMutation.isPending}
+                  onClick={handleUpdatePlace}
+                  className="rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700"
+                >
+                  {updatePlaceMutation.isPending ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </MainLayout>
   );
 };
 
-export default EditProfilePage;
+export default EditPlacePage;
