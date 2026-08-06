@@ -146,16 +146,39 @@ export interface AdminPlaceDetails extends AdminPlace {
   }[];
 
   reviews: {
+    id: string;
+    rating: number;
+    comment: string;
+    createdAt: string;
+    user: {
+      id: string;
+      fullName: string;
+      username: string;
+    };
+  }[];
+}
+
+export interface AdminVerificationRequest {
   id: string;
-  rating: number;
-  comment: string;
+
+  reason: string | null;
+
+  status: "PENDING" | "APPROVED" | "REJECTED";
+
+  documentUrl: string;
+
+  selfieUrl: string | null;
+
   createdAt: string;
+
   user: {
     id: string;
     fullName: string;
     username: string;
+    email: string;
+    avatar: string | null;
+    isVerified: boolean;
   };
-}[];
 }
 
 export const adminApi = {
@@ -267,6 +290,30 @@ export const adminApi = {
     const { data } = await api.get<ApiResponse<AdminPlaceDetails>>(
       `/admin/places/${id}`,
     );
+
+    return data.data;
+  },
+
+  getVerificationRequests: async () => {
+    const { data } = await api.get("/verification-requests");
+
+    return data.data;
+  },
+
+  approveVerificationRequest: async (id: string) => {
+    const { data } = await api.patch(`/verification-requests/${id}/approve`);
+
+    return data.data;
+  },
+
+  rejectVerificationRequest: async (id: string) => {
+    const { data } = await api.patch(`/verification-requests/${id}/reject`);
+
+    return data.data;
+  },
+
+  getVerificationRequestById: async (id: string) => {
+    const { data } = await api.get(`/verification-requests/${id}`);
 
     return data.data;
   },

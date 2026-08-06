@@ -4,6 +4,7 @@ import {
   FolderTree,
   LogOut,
   MapPin,
+  Shield,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
@@ -27,6 +28,11 @@ const menuItems = [
     name: "Places",
     path: "/admin/places",
     icon: MapPin,
+  },
+  {
+    name: "Verify User",
+    icon: Shield,
+    path: "/admin/verification-requests",
   },
   // {
   //   name: "Tags",

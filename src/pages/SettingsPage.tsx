@@ -103,6 +103,23 @@ const SettingsPage = () => {
               Manage your account session.
             </p>
           </div>
+          <button
+  type="button"
+  onClick={() => navigate("/settings/verification")}
+  className="mb-4 flex w-full items-center justify-between rounded-2xl border border-blue-200 p-4 transition hover:bg-blue-50"
+>
+  <div>
+    <h3 className="text-left font-medium">
+      Account Verification
+    </h3>
+
+    <p className="mt-1 text-left text-sm text-zinc-500">
+      Request a verified badge for your account.
+    </p>
+  </div>
+
+  <span className="text-xl">→</span>
+</button>
 
           <button
             type="button"

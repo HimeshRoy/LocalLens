@@ -139,7 +139,7 @@ const CategoryForm = ({ mode, category }: CategoryFormProps) => {
             Category Icon
           </label>
 
-          <div className="grid grid-cols-8 gap-3">
+          <div className="grid grid-cols-6 gap-3">
             {categoryIcons.map((icon) => (
               <button
                 key={icon}

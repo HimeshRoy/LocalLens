@@ -23,6 +23,9 @@ import UsersPage from "../pages/admin/UsersPage";
 import PlacesPage from "../pages/admin/PlacesPage";
 import AdminPlaceDetailsPage from "../pages/admin/AdminPlaceDetailsPage";
 import MapPage from "../pages/MapPage";
+import VerificationPage from "../pages/VerificationPage";
+import AdminVerificationRequestsPage from "../pages/admin/AdminVerificationRequestsPage";
+import AdminVerificationRequestDetailsPage from "../pages/admin/AdminVerificationRequestDetailsPage";
 
 const AppRouter = () => {
   return (
@@ -42,6 +45,7 @@ const AppRouter = () => {
           <Route path="/collections/:id" element={<CollectionDetailsPage />} />
           <Route path="/places/:id/edit" element={<EditPlacePage />} />
           <Route path="/profile/edit" element={<EditProfilePage />} />
+          <Route path="/settings/verification" element={<VerificationPage />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Route>
 
@@ -60,9 +64,17 @@ const AppRouter = () => {
             <Route path="/admin/users" element={<UsersPage />} />
             <Route path="/admin/places" element={<PlacesPage />} />
             <Route
-    path="admin/places/:id"
-    element={<AdminPlaceDetailsPage />}
-/>
+              path="admin/places/:id"
+              element={<AdminPlaceDetailsPage />}
+            />
+            <Route
+              path="/admin/verification-requests"
+              element={<AdminVerificationRequestsPage />}
+            />
+             <Route
+              path="/admin/verification-requests/:id"
+              element={<AdminVerificationRequestDetailsPage  />}
+            />
           </Route>
         </Route>
 
