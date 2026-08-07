@@ -12,14 +12,15 @@ interface RowActionsProps {
   onEdit?: () => void;
   onDelete?: () => void;
   onToggle?: () => void;
-
-  onVerify?: () => void;
-  isVerified?: boolean;
-  verifyLabel?: string;
+  onApprove?: () => void;
+  onReject?: () => void;
+  status?: "PENDING" | "APPROVED" | "REJECTED";
   isActive?: boolean;
   onRoleChange?: () => void;
   roleLabel?: string;
-
+  onVerify?: () => void;
+  isVerified?: boolean;
+  verifyLabel?: string;
   editLabel?: string;
   deleteLabel?: string;
   toggleLabel?: string;
@@ -30,12 +31,15 @@ const RowActions = ({
   onDelete,
   onToggle,
   onVerify,
-  isActive,
   isVerified,
+  verifyLabel,
+  onApprove,
+  onReject,
+  status,
+  isActive,
   editLabel,
   deleteLabel,
   toggleLabel,
-  verifyLabel,
   onRoleChange,
   roleLabel = "Change Role",
 }: RowActionsProps) => {
@@ -105,6 +109,32 @@ const RowActions = ({
 
               {verifyLabel ??
                 (isVerified ? "Remove Verification" : "Verify User")}
+            </button>
+          )}
+
+          {onApprove && status !== "APPROVED" && (
+            <button
+              onClick={() => {
+                setOpen(false);
+                onApprove();
+              }}
+              className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-zinc-50"
+            >
+              <BadgeCheck size={16} />
+              Approve Place
+            </button>
+          )}
+
+          {onReject && status !== "REJECTED" && (
+            <button
+              onClick={() => {
+                setOpen(false);
+                onReject();
+              }}
+              className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-zinc-50"
+            >
+              <EyeOff size={16} />
+              Reject Place
             </button>
           )}
 

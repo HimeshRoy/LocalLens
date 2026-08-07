@@ -36,13 +36,6 @@ const AdminTopbar = () => {
       </div>
 
       <div className="flex items-center gap-5">
-
-        <button className="relative rounded-xl border border-zinc-200 p-3 transition hover:bg-zinc-100">
-          <Bell size={20} />
-
-          <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-red-500" />
-        </button>
-
         <div className="flex items-center gap-3">
           <img
             src={user?.avatar || "https://placehold.co/100x100?text=A"}

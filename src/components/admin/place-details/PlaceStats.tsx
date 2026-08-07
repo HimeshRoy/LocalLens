@@ -34,7 +34,7 @@ const PlaceStats = ({ place }: PlaceStatsProps) => {
         <p className="text-sm font-medium text-zinc-500">Status</p>
 
         <h2 className="mt-2 text-lg font-bold">
-          {place.isVerified ? "Verified" : "Pending"}
+          {place.status}
         </h2>
 
         <p

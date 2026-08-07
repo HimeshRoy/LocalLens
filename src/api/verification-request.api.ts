@@ -4,39 +4,28 @@ import type { ApiResponse } from "../types/api.types";
 export interface VerificationRequest {
   id: string;
 
-  reason?: string;
-
-  documentUrl: string;
-  documentPublicId: string;
-
-  selfieUrl?: string;
-  selfiePublicId?: string;
-
   status: "PENDING" | "APPROVED" | "REJECTED";
-
-  rejectionReason?: string;
 
   createdAt: string;
   updatedAt: string;
 }
 
-export interface CreateVerificationRequestPayload {
-  reason?: string;
+export interface VerificationEligibility {
+  isVerified: boolean;
+  alreadyApplied: boolean;
 
-  documentUrl: string;
-  documentPublicId: string;
+  approvedPlaces: number;
+  reviewsCount: number;
 
-  selfieUrl?: string;
-  selfiePublicId?: string;
+  requiredPlaces: number;
+  requiredReviews: number;
+
+  eligible: boolean;
 }
 
 export const verificationRequestApi = {
-  create: async (formData: FormData) => {
-    const { data } = await api.post("/verification-requests", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+  create: async () => {
+    const { data } = await api.post("/verification-requests");
 
     return data;
   },
@@ -45,6 +34,12 @@ export const verificationRequestApi = {
     const { data } = await api.get<ApiResponse<VerificationRequest[]>>(
       "/verification-requests/my",
     );
+
+    return data;
+  },
+
+  getEligibility: async () => {
+    const { data } = await api.get("/verification-requests/eligibility");
 
     return data;
   },

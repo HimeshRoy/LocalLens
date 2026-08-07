@@ -1,5 +1,6 @@
 import type { AdminPlaceDetails } from "../../../api/admin.api";
-import { useAdminVerifyPlace } from "../../../hooks/useAdminVerifyPlace";
+import { useApprovePlace } from "../../../hooks/useApprovePlace";
+import { useRejectPlace } from "../../../hooks/useRejectPlace";
 import { useAdminUpdatePlaceStatus } from "../../../hooks/useAdminUpdatePlaceStatus";
 import { useAdminDeletePlace } from "../../../hooks/useAdminDeletePlace";
 import { useState } from "react";
@@ -11,7 +12,8 @@ interface PlaceActionsProps {
 }
 
 const PlaceActions = ({ place }: PlaceActionsProps) => {
-  const verifyMutation = useAdminVerifyPlace();
+  const approveMutation = useApprovePlace();
+const rejectMutation = useRejectPlace();
   const statusMutation = useAdminUpdatePlaceStatus();
   const deleteMutation = useAdminDeletePlace();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -23,21 +25,32 @@ const PlaceActions = ({ place }: PlaceActionsProps) => {
 
       <div className="grid grid-cols-4 gap-5 items-center">
         <button
-          onClick={() =>
-            verifyMutation.mutate({
-              id: place.id,
-              isVerified: true,
-            })
-          }
-          disabled={place.isVerified || verifyMutation.isPending}
-          className="w-full rounded-xl bg-blue-600 px-4 py-3 font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {verifyMutation.isPending
-            ? "Verifying..."
-            : place.isVerified
-              ? "Verified"
-              : "Verify Place"}
-        </button>
+  onClick={() => approveMutation.mutate(place.id)}
+  disabled={
+    place.status === "APPROVED" || approveMutation.isPending
+  }
+  className="w-full rounded-xl bg-green-600 px-4 py-3 font-medium text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+>
+  {approveMutation.isPending
+    ? "Approving..."
+    : place.status === "APPROVED"
+      ? "Approved"
+      : "Approve Place"}
+</button>
+
+<button
+  onClick={() => rejectMutation.mutate(place.id)}
+  disabled={
+    place.status === "REJECTED" || rejectMutation.isPending
+  }
+  className="w-full rounded-xl bg-orange-600 px-4 py-3 font-medium text-white transition hover:bg-orange-700 disabled:cursor-not-allowed disabled:opacity-50"
+>
+  {rejectMutation.isPending
+    ? "Rejecting..."
+    : place.status === "REJECTED"
+      ? "Rejected"
+      : "Reject Place"}
+</button>
 
         <button
           onClick={() =>

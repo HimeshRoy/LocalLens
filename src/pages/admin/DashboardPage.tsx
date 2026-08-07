@@ -34,7 +34,7 @@ const DashboardPage = () => {
   return (
     <div className="space-y-8">
 
-      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-5">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
         <AdminStatCard
           title="Users"
           color="from-blue-500 to-indigo-600"
@@ -91,12 +91,26 @@ const DashboardPage = () => {
           color="from-orange-500 to-red-500"
         />
 
-        <AdminStatCard
-          title="Verified Places"
-          value={stats.verifiedPlaces}
-          icon={ShieldCheck}
-          color="from-emerald-500 to-green-600"
-        />
+       <AdminStatCard
+  title="Approved Places"
+  value={stats.approvedPlaces}
+  icon={ShieldCheck}
+  color="from-emerald-500 to-green-600"
+/>
+
+<AdminStatCard
+  title="Pending Places"
+  value={stats.pendingPlaces}
+  icon={Clock3}
+  color="from-yellow-500 to-amber-600"
+/>
+
+<AdminStatCard
+  title="Rejected Places"
+  value={stats.rejectedPlaces}
+  icon={MapPinned}
+  color="from-red-500 to-rose-600"
+/>
 
         <AdminStatCard
           title="Pending Claims"

@@ -1,5 +1,4 @@
 import type { LucideIcon } from "lucide-react";
-import { ArrowUpRight } from "lucide-react";
 
 interface AdminStatCardProps {
   title: string;
@@ -41,23 +40,10 @@ const AdminStatCard = ({
           className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${color}`}
         >
           <Icon
-            size={26}
+            size={20}
             className="text-white"
           />
         </div>
-
-      </div>
-
-      <div className="relative mt-6 flex items-center justify-between">
-
-        <p className="text-xs text-zinc-500">
-          Updated just now
-        </p>
-
-        <ArrowUpRight
-          size={18}
-          className="text-zinc-400 transition group-hover:translate-x-1 group-hover:-translate-y-1"
-        />
 
       </div>
 

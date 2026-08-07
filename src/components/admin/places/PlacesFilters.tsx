@@ -49,8 +49,10 @@ const PlacesFilters = ({
         className="rounded-xl border border-zinc-200 px-4 py-3"
       >
         <option value="">All Status</option>
-        <option value="VERIFIED">Verified</option>
+        <option value="APPROVED">Approved</option>
         <option value="PENDING">Pending</option>
+        <option value="REJECTED">Rejected</option>
+        <option value="ACTIVE">Active</option>
         <option value="INACTIVE">Inactive</option>
       </select>
     </div>

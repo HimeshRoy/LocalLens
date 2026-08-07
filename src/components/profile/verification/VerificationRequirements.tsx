@@ -1,58 +1,129 @@
-import { CheckCircle2, ShieldCheck, UserCheck, FileBadge2 } from "lucide-react";
+import { MapPinned, Star, CheckCircle2, Lock } from "lucide-react";
 
-const items = [
-  {
-    icon: UserCheck,
-    title: "Authentic Account",
-    description: "Your account should represent a real person or business.",
-  },
-  {
-    icon: FileBadge2,
-    title: "Government-issued ID",
-    description: "Upload a valid government-issued identity document.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Complete Profile",
-    description:
-      "Make sure your profile photo, name and information are up to date.",
-  },
-  {
-    icon: CheckCircle2,
-    title: "One Active Request",
-    description:
-      "You can only have one verification request under review at a time.",
-  },
-];
+interface VerificationRequirementsProps {
+  eligibility?: {
+    approvedPlaces: number;
+    reviewsCount: number;
+    requiredPlaces: number;
+    requiredReviews: number;
+    eligible: boolean;
+  };
+}
 
-const VerificationRequirements = () => {
+const VerificationRequirements = ({
+  eligibility,
+}: VerificationRequirementsProps) => {
   return (
-    <div className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm mt-4">
-      <h2 className="text-xl font-semibold">Before You Apply</h2>
+    <div className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
+      <h2 className="text-xl font-semibold">
+        Become a Verified Local Contributor
+      </h2>
 
       <p className="mt-2 text-sm text-zinc-500">
-        Please review these requirements before submitting your request.
+        Verification is awarded to contributors who consistently add valuable
+        places and reviews to the LocalLens community.
       </p>
 
-      <div className="mt-6 space-y-4">
-        {items.map((item) => {
-          const Icon = item.icon;
+      {eligibility && (
+        <div className="mt-8 space-y-6">
+          <div>
+            <div className="mb-2 flex items-center justify-between">
+              <span className="font-medium">Approved Places</span>
 
-          return (
-            <div
-              key={item.title}
-              className="flex gap-4 rounded-2xl bg-zinc-50 p-4"
-            >
-                <Icon size={45} className="text-blue-600" />
-
-              <div>
-                <h3 className="font-medium">{item.title}</h3>
-
-                <p className="mt-1 text-sm text-zinc-500">{item.description}</p>
-              </div>
+              <span className="text-sm font-semibold">
+                {eligibility.approvedPlaces} / {eligibility.requiredPlaces}
+              </span>
             </div>
-          );
-        })}
+
+            <div className="h-3 overflow-hidden rounded-full bg-zinc-200">
+              <div
+                className="h-full rounded-full bg-blue-600 transition-all"
+                style={{
+                  width: `${Math.min(
+                    (eligibility.approvedPlaces / eligibility.requiredPlaces) *
+                      100,
+                    100,
+                  )}%`,
+                }}
+              />
+            </div>
+          </div>
+
+          <div>
+            <div className="mb-2 flex items-center justify-between">
+              <span className="font-medium">Reviews</span>
+
+              <span className="text-sm font-semibold">
+                {eligibility.reviewsCount} / {eligibility.requiredReviews}
+              </span>
+            </div>
+
+            <div className="h-3 overflow-hidden rounded-full bg-zinc-200">
+              <div
+                className="h-full rounded-full bg-amber-500 transition-all"
+                style={{
+                  width: `${Math.min(
+                    (eligibility.reviewsCount / eligibility.requiredReviews) *
+                      100,
+                    100,
+                  )}%`,
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="mt-8 space-y-6">
+        <div className="flex items-start gap-4 rounded-2xl bg-zinc-50 p-5">
+          <MapPinned className="text-blue-600" size={32} />
+
+          <div>
+            <h3 className="font-semibold">Add 50 Approved Places</h3>
+
+            <p className="mt-1 text-sm text-zinc-500">
+              Only places approved by the moderation team count toward
+              verification.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-start gap-4 rounded-2xl bg-zinc-50 p-5">
+          <Star className="text-amber-500" size={32} />
+
+          <div>
+            <h3 className="font-semibold">Write 100 Reviews</h3>
+
+            <p className="mt-1 text-sm text-zinc-500">
+              Share genuine and helpful reviews with the community.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-start gap-4 rounded-2xl bg-zinc-50 p-5">
+          <CheckCircle2 className="text-green-600" size={32} />
+
+          <div>
+            <h3 className="font-semibold">Community Quality Check</h3>
+
+            <p className="mt-1 text-sm text-zinc-500">
+              Our moderators review your overall contribution quality before
+              granting the verified badge.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-start gap-4 rounded-2xl bg-zinc-50 p-5">
+          <Lock className="text-purple-600" size={32} />
+
+          <div>
+            <h3 className="font-semibold">One Active Request</h3>
+
+            <p className="mt-1 text-sm text-zinc-500">
+              You can have only one verification request under review at a time.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

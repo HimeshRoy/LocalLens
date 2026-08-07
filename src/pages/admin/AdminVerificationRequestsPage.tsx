@@ -18,7 +18,7 @@ const AdminVerificationRequestsPage = () => {
       <div className="space-y-6">
         <AdminPageHeader
           title="Verification Requests"
-          description="Review and manage account verification requests."
+         description="Review contributor activity and approve verification requests."
         />
       </div>
       <VerificationRequestsTable requests={data ?? []} />

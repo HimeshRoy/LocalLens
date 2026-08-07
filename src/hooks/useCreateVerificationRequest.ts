@@ -8,8 +8,8 @@ export const useCreateVerificationRequest = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (formData: FormData) => verificationRequestApi.create(formData),
-
+    mutationFn: () =>
+  verificationRequestApi.create(),
     onSuccess: (response) => {
       toast.success(response.message);
 

@@ -2,19 +2,19 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { adminApi } from "../api/admin.api";
 
-export const useAdminVerifyPlace = () => {
+export const useRejectPlace = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, isVerified }: { id: string; isVerified: boolean }) =>
-      adminApi.verifyPlace(id, isVerified),
+    mutationFn: (id: string) => adminApi.rejectPlace(id),
 
     onSuccess: () => {
-      toast.success("Place verification updated successfully");
+      toast.success("Place rejected successfully");
 
       queryClient.invalidateQueries({
         queryKey: ["admin-places"],
       });
+
       queryClient.invalidateQueries({
         queryKey: ["admin-place"],
       });
@@ -22,7 +22,7 @@ export const useAdminVerifyPlace = () => {
 
     onError: (error: any) => {
       toast.error(
-        error?.response?.data?.message || "Failed to update place verification",
+        error?.response?.data?.message || "Failed to reject place",
       );
     },
   });

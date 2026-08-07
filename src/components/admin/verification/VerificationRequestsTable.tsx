@@ -17,7 +17,11 @@ const VerificationRequestsTable = ({
           <tr className="text-left text-sm font-semibold text-zinc-600">
             <th className="px-6 py-4">User</th>
 
-            <th className="px-6 py-4">Status</th>
+            <th className="px-6 py-4">Approved Places</th>
+
+<th className="px-6 py-4">Reviews</th>
+
+<th className="px-6 py-4">Status</th>
 
             <th className="px-6 py-4">Submitted</th>
 
@@ -44,13 +48,36 @@ const VerificationRequestsTable = ({
                     <p className="text-sm text-zinc-500">
                       @{request.user.username}
                     </p>
+                    <p
+  className={`mt-1 text-xs font-medium ${
+    request.eligible
+      ? "text-green-600"
+      : "text-red-600"
+  }`}
+>
+  {request.eligible
+    ? "Eligible for verification"
+    : "Requirements not met"}
+</p>
                   </div>
                 </div>
               </td>
 
               <td className="px-6 py-4">
-                <VerificationStatusBadge status={request.status} />
-              </td>
+  <span className="font-semibold text-blue-600">
+    {request.approvedPlaces}
+  </span>
+</td>
+
+<td className="px-6 py-4">
+  <span className="font-semibold text-amber-500">
+    {request.reviewsCount}
+  </span>
+</td>
+
+<td className="px-6 py-4">
+  <VerificationStatusBadge status={request.status} />
+</td>
 
               <td className="px-6 py-4">
                 {new Date(request.createdAt).toLocaleDateString()}

@@ -2,8 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useAdminVerificationRequest } from "../../hooks/useAdminVerificationRequest";
 import VerificationUserCard from "../../components/admin/verification/VerificationUserCard";
-import DocumentPreviewCard from "../../components/admin/verification/DocumentPreviewCard";
-import VerificationReasonCard from "../../components/admin/verification/VerificationReasonCard";
 import { useApproveVerificationRequest } from "../../hooks/useApproveVerificationRequest";
 import { useRejectVerificationRequest } from "../../hooks/useRejectVerificationRequest";
 import VerificationActionsCard from "../../components/admin/verification/VerificationActionsCard";
@@ -52,15 +50,6 @@ const AdminVerificationRequestDetailsPage = () => {
           </div>
         </div>
         <VerificationUserCard request={request} />
-        <div className="flex gap-5 items-center">
-          <DocumentPreviewCard
-            title="Government ID"
-            image={request.documentUrl}
-          />
-
-          <DocumentPreviewCard title="Selfie" image={request.selfieUrl} />
-        </div>
-        <VerificationReasonCard reason={request.reason} />
         <VerificationActionsCard
           status={request.status}
           approving={approveMutation.isPending}

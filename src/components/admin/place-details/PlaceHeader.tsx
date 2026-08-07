@@ -18,19 +18,13 @@ const PlaceHeader = ({ place }: PlaceHeaderProps) => {
       </Link>
 
       <div className="flex items-start gap-5">
-        <Avatar
-          image={place.coverImage}
-          name={place.name}
-        />
+        <Avatar image={place.coverImage} name={place.name} />
 
         <div className="flex-1">
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-3xl font-bold text-zinc-900">{place.name}</h1>
 
-            <PlaceStatusBadge
-              isVerified={place.isVerified}
-              isActive={place.isActive}
-            />
+            <PlaceStatusBadge status={place.status} isActive={place.isActive} />
           </div>
 
           <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-zinc-500">

@@ -4,7 +4,8 @@ import PlaceStatusBadge from "./PlaceStatusBadge";
 import RowActions from "../RowActions";
 import { useState } from "react";
 import ConfirmDialog from "../../common/ConfirmDialog";
-import { useAdminVerifyPlace } from "../../../hooks/useAdminVerifyPlace";
+import { useApprovePlace } from "../../../hooks/useApprovePlace";
+import { useRejectPlace } from "../../../hooks/useRejectPlace";
 import { useAdminUpdatePlaceStatus } from "../../../hooks/useAdminUpdatePlaceStatus";
 import { useDeletePlace } from "../../../hooks/useDeletePlace";
 import { Link } from "react-router-dom";
@@ -16,12 +17,13 @@ interface PlacesTableProps {
 const PlacesTable = ({ places }: PlacesTableProps) => {
   const [selectedPlace, setSelectedPlace] = useState<AdminPlace | null>(null);
 
-  const [action, setAction] = useState<"verify" | "status" | "delete" | null>(
-    null,
-  );
+  const [action, setAction] = useState<
+    "approve" | "reject" | "status" | "delete" | null
+  >(null);
 
-  const { mutate: verifyPlace, isPending: verifyPending } =
-    useAdminVerifyPlace();
+  const { mutate: approvePlace, isPending: approvePending } = useApprovePlace();
+
+  const { mutate: rejectPlace, isPending: rejectPending } = useRejectPlace();
 
   const { mutate: updatePlaceStatus, isPending: statusPending } =
     useAdminUpdatePlaceStatus();
@@ -32,11 +34,12 @@ const PlacesTable = ({ places }: PlacesTableProps) => {
     if (!selectedPlace || !action) return;
 
     switch (action) {
-      case "verify":
-        verifyPlace({
-          id: selectedPlace.id,
-          isVerified: !selectedPlace.isVerified,
-        });
+      case "approve":
+        approvePlace(selectedPlace.id);
+        break;
+
+      case "reject":
+        rejectPlace(selectedPlace.id);
         break;
 
       case "status":
@@ -89,25 +92,23 @@ const PlacesTable = ({ places }: PlacesTableProps) => {
               className="border-t border-zinc-100 hover:bg-zinc-50"
             >
               <td className="px-6 py-4">
-                <Link
-  to={`/admin/places/${place.id}`}
->
-                <div className="flex items-center gap-3">
-                  <Avatar image={place.coverImage} name={place.name} />
+                <Link to={`/admin/places/${place.id}`}>
+                  <div className="flex items-center gap-3">
+                    <Avatar image={place.coverImage} name={place.name} />
 
-                  <div>
-                    <p className="font-semibold">{place.name}</p>
+                    <div>
+                      <p className="font-semibold">{place.name}</p>
 
-                    <p className="text-sm text-zinc-500">
-                      {place.city}, {place.state}
-                    </p>
+                      <p className="text-sm text-zinc-500">
+                        {place.city}, {place.state}
+                      </p>
+                    </div>
                   </div>
-                </div>
                 </Link>
               </td>
 
               <td className="px-6 py-4">
-                <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-semibold">
+                <span className="rounded-full bg-zinc-100 px-3 text-center py-1 text-xs font-semibold flex flex-col">
                   {place.category.icon} {place.category.name}
                 </span>
               </td>
@@ -122,13 +123,13 @@ const PlacesTable = ({ places }: PlacesTableProps) => {
                 </div>
               </td>
 
-              <td className="px-6 py-4">⭐ {place.averageRating.toFixed(1)}</td>
+              <td className="px-6 py-4 ">{place.averageRating.toFixed(1)}</td>
 
               <td className="px-6 py-4">{place._count.reviews}</td>
 
               <td className="px-6 py-4">
                 <PlaceStatusBadge
-                  isVerified={place.isVerified}
+                  status={place.status}
                   isActive={place.isActive}
                 />
               </td>
@@ -141,10 +142,14 @@ const PlacesTable = ({ places }: PlacesTableProps) => {
                 <td className="px-6 py-4 text-right">
                   <RowActions
                     isActive={place.isActive}
-                    isVerified={place.isVerified}
-                    onVerify={() => {
+                    status={place.status}
+                    onApprove={() => {
                       setSelectedPlace(place);
-                      setAction("verify");
+                      setAction("approve");
+                    }}
+                    onReject={() => {
+                      setSelectedPlace(place);
+                      setAction("reject");
                     }}
                     onToggle={() => {
                       setSelectedPlace(place);
@@ -154,9 +159,6 @@ const PlacesTable = ({ places }: PlacesTableProps) => {
                       setSelectedPlace(place);
                       setAction("delete");
                     }}
-                    verifyLabel={
-                      place.isVerified ? "Remove Verification" : "Verify Place"
-                    }
                     toggleLabel={place.isActive ? "Deactivate" : "Activate"}
                     deleteLabel="Delete Place"
                   />
@@ -174,17 +176,19 @@ const PlacesTable = ({ places }: PlacesTableProps) => {
           setSelectedPlace(null);
         }}
         onConfirm={handleConfirmAction}
-        loading={verifyPending || statusPending || deletePending}
+        loading={
+          approvePending || rejectPending || statusPending || deletePending
+        }
         title={
-          action === "verify"
-            ? selectedPlace?.isVerified
-              ? "Remove Verification"
-              : "Verify Place"
-            : action === "status"
-              ? selectedPlace?.isActive
-                ? "Deactivate Place"
-                : "Activate Place"
-              : "Delete Place"
+          action === "approve"
+            ? "Approve Place"
+            : action === "reject"
+              ? "Reject Place"
+              : action === "status"
+                ? selectedPlace?.isActive
+                  ? "Deactivate Place"
+                  : "Activate Place"
+                : "Delete Place"
         }
         message={
           action === "delete"

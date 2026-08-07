@@ -1,34 +1,39 @@
 interface PlaceStatsProps {
   statistics: {
-    total: number;
-    verified: number;
-    pending: number;
-    inactive: number;
-  };
+  total: number;
+  approved: number;
+  pending: number;
+  rejected: number;
+  inactive: number;
+};
 }
 
 const PlaceStats = ({ statistics }: PlaceStatsProps) => {
   const cards = [
-    {
-      title: "Total Places",
-      value: statistics.total,
-    },
-    {
-      title: "Verified",
-      value: statistics.verified,
-    },
-    {
-      title: "Pending",
-      value: statistics.pending,
-    },
-    {
-      title: "Inactive",
-      value: statistics.inactive,
-    },
-  ];
+  {
+    title: "Total Places",
+    value: statistics.total,
+  },
+  {
+    title: "Approved",
+    value: statistics.approved,
+  },
+  {
+    title: "Pending",
+    value: statistics.pending,
+  },
+  {
+    title: "Rejected",
+    value: statistics.rejected,
+  },
+  {
+    title: "Inactive",
+    value: statistics.inactive,
+  },
+];
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+    <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-5">
       {cards.map((card) => (
         <div
           key={card.title}

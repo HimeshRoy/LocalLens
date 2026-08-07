@@ -3,16 +3,20 @@ import type { ApiResponse } from "../types/api.types";
 
 export interface DashboardStatistics {
   fullName: string;
-  users: number;
-  businesses: number;
-  places: number;
-  reviews: number;
-  favorites: number;
-  collections: number;
-  categories: number;
-  tags: number;
-  verifiedPlaces: number;
-  pendingClaims: number;
+   users: number;
+    businesses: number;
+    places: number;
+    reviews: number;
+    favorites: number;
+    collections: number;
+    categories: number;
+    tags: number;
+
+    approvedPlaces: number;
+    pendingPlaces: number;
+    rejectedPlaces: number;
+
+    pendingClaims: number;
 }
 
 export interface AdminPlaceDetails extends AdminPlace {
@@ -99,7 +103,7 @@ export interface AdminPlace {
   state: string;
 
   isActive: boolean;
-  isVerified: boolean;
+  status: "PENDING" | "APPROVED" | "REJECTED";
 
   averageRating: number;
   totalReviews: number;
@@ -161,15 +165,13 @@ export interface AdminPlaceDetails extends AdminPlace {
 export interface AdminVerificationRequest {
   id: string;
 
-  reason: string | null;
-
   status: "PENDING" | "APPROVED" | "REJECTED";
 
-  documentUrl: string;
-
-  selfieUrl: string | null;
-
   createdAt: string;
+
+  approvedPlaces: number;
+  reviewsCount: number;
+  eligible: boolean;
 
   user: {
     id: string;
@@ -178,6 +180,11 @@ export interface AdminVerificationRequest {
     email: string;
     avatar: string | null;
     isVerified: boolean;
+    createdAt: string;
+
+    _count: {
+      reviews: number;
+    };
   };
 }
 
@@ -264,10 +271,14 @@ export const adminApi = {
     return data.data;
   },
 
-  verifyPlace: async (id: string, isVerified: boolean) => {
-    const { data } = await api.patch(`/admin/places/${id}/verification`, {
-      isVerified,
-    });
+  approvePlace: async (id: string) => {
+    const { data } = await api.patch(`/admin/places/${id}/approve`);
+
+    return data.data;
+  },
+
+  rejectPlace: async (id: string) => {
+    const { data } = await api.patch(`/admin/places/${id}/reject`);
 
     return data.data;
   },
