@@ -1,4 +1,3 @@
-import { Bell } from "lucide-react";
 import { useMyProfile } from "../../hooks/useMyProfile";
 import UserBadge from "../common/UserBadge";
 
