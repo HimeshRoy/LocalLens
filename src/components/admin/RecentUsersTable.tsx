@@ -56,7 +56,7 @@ const RecentUsersTable = ({
                     <img
                       src={
                         user.avatar ??
-                        "https://placehold.co/100x100?text=U"
+                        "https://placehold.co/200x200/e5e7eb/6b7280?text=User"
                       }
                       alt={user.fullName}
                       className="h-11 w-11 rounded-full object-cover"

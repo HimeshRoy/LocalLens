@@ -45,31 +45,77 @@ const RowActions = ({
 }: RowActionsProps) => {
   const [open, setOpen] = useState(false);
 
+  const [menuPosition, setMenuPosition] = useState({
+    top: 0,
+    left: 0,
+  });
+
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const close = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+
+      if (
+        !buttonRef.current?.contains(target) &&
+        !menuRef.current?.contains(target)
+      ) {
         setOpen(false);
       }
     };
 
     document.addEventListener("mousedown", close);
 
-    return () => document.removeEventListener("mousedown", close);
+    return () => {
+      document.removeEventListener("mousedown", close);
+    };
   }, []);
 
   return (
     <div ref={menuRef} className="relative">
       <button
-        onClick={() => setOpen(!open)}
+        ref={buttonRef}
+        onClick={(e) => {
+          const rect = e.currentTarget.getBoundingClientRect();
+
+          const menuWidth = 192;
+          const menuHeight = 180;
+          const gap = 8;
+
+          const spaceBelow = window.innerHeight - rect.bottom;
+          const spaceAbove = rect.top;
+
+          const shouldOpenUpward =
+            spaceBelow < menuHeight && spaceAbove > spaceBelow;
+
+          const top = shouldOpenUpward
+            ? rect.top - menuHeight - gap
+            : rect.bottom + gap;
+
+          const left = Math.max(8, rect.right - menuWidth);
+
+          setMenuPosition({
+            top,
+            left,
+          });
+
+          setOpen((prev) => !prev);
+        }}
         className="rounded-lg p-2 transition hover:bg-zinc-100"
       >
         <MoreVertical size={18} />
       </button>
 
       {open && (
-        <div className="absolute right-0 z-100 mt-2 w-48 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-xl">
+        <div
+          ref={menuRef}
+          className="fixed z-[99999] w-48 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-xl"
+          style={{
+            top: menuPosition.top,
+            left: menuPosition.left,
+          }}
+        >
           {onEdit && (
             <button
               onClick={() => {
