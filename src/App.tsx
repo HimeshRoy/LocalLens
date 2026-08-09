@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import AppRouter from "./routes/AppRouter";
 import { useLocation } from "./hooks/useLocation";
-import { Analytics } from "@vercel/analytics/next";
+import { Analytics } from "@vercel/analytics/react";
 
 function App() {
   const { refreshLocation, latitude } = useLocation();
