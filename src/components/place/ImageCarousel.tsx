@@ -74,7 +74,7 @@ const ImageCarousel = ({ images }: ImageCarouselProps) => {
                 src={image}
                 alt=""
                 onClick={() => setIsFullscreen(true)}
-                className="w-full cursor-zoom-in object-cover"
+                className=" h-[400px] w-full cursor-zoom-in object-cover"
               />
             </div>
           ))}
